@@ -68,17 +68,26 @@ const Events = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-warm-beige to-pale-yellow/30 dark:from-space-navy dark:to-electric-cyan/10">
+    <div className="min-h-screen bg-background">
+      <div className="absolute inset-0 z-0">
+        <img
+          src="https://images.unsplash.com/photo-1530026405186-ed1f139313f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+          alt="Medical event background"
+          className="w-full h-full object-cover opacity-30"
+        />
+        <div className="absolute inset-0 bg-background/80" />
+      </div>
+
       <Navbar />
       
-      <div className="pt-20 pb-16 px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 pt-20 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12 animate-fade-in">
-            <h1 className="text-4xl md:text-5xl font-bold text-rich-charcoal dark:text-soft-white mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-soft-white mb-4">
               Blood Donation Events
             </h1>
-            <p className="text-xl text-rich-charcoal/70 dark:text-dark-text/70">
+            <p className="text-xl text-dark-text/70">
               Find and register for blood donation events in your area
             </p>
           </div>
@@ -86,12 +95,12 @@ const Events = () => {
           {/* Search */}
           <div className="max-w-md mx-auto mb-12 animate-slide-up">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-deep-coral dark:text-neon-pink" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neon-pink" />
               <Input
                 placeholder="Search events by name or location..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-12 glass border-deep-coral/20 dark:border-electric-cyan/20 focus:border-deep-coral dark:focus:border-electric-cyan h-12 text-lg"
+                className="pl-12 glass border-electric-cyan/20 focus:border-electric-cyan h-12 text-lg text-white"
               />
             </div>
           </div>
@@ -111,7 +120,7 @@ const Events = () => {
                       className="h-64 md:h-full bg-cover bg-center relative"
                       style={{ backgroundImage: `url(${event.image})` }}
                     >
-                      <div className="absolute inset-0 bg-gradient-to-r from-deep-coral/20 to-soft-teal/20 dark:from-neon-pink/20 dark:to-electric-cyan/20" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-neon-pink/20 to-electric-cyan/20" />
                       
                       {/* Status Badge */}
                       <div className="absolute top-4 left-4">
@@ -119,7 +128,7 @@ const Events = () => {
                           className={`${
                             event.status === 'urgent'
                               ? 'bg-red-500 text-white animate-pulse'
-                              : 'bg-deep-coral dark:bg-neon-pink text-white'
+                              : 'bg-neon-pink text-white'
                           }`}
                         >
                           {event.status === 'urgent' ? 'URGENT' : 'UPCOMING'}
@@ -142,20 +151,20 @@ const Events = () => {
                     <div className="flex flex-col h-full">
                       {/* Header */}
                       <div className="mb-6">
-                        <h2 className="text-2xl md:text-3xl font-bold text-rich-charcoal dark:text-soft-white mb-2">
+                        <h2 className="text-2xl md:text-3xl font-bold text-soft-white mb-2">
                           {event.title}
                         </h2>
-                        <p className="text-rich-charcoal/70 dark:text-dark-text/70 leading-relaxed">
+                        <p className="text-dark-text/70 leading-relaxed">
                           {event.description}
                         </p>
                       </div>
 
                       {/* Event Info */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        <div className="flex items-center text-rich-charcoal/80 dark:text-dark-text/80">
-                          <Calendar className="w-5 h-5 mr-3 text-deep-coral dark:text-neon-pink" />
+                        <div className="flex items-center text-dark-text/80">
+                          <Calendar className="w-5 h-5 mr-3 text-neon-pink" />
                           <div>
-                            <div className="font-medium">
+                            <div className="font-medium text-soft-white">
                               {new Date(event.date).toLocaleDateString('en-US', {
                                 weekday: 'long',
                                 year: 'numeric',
@@ -163,39 +172,39 @@ const Events = () => {
                                 day: 'numeric'
                               })}
                             </div>
-                            <div className="text-sm text-rich-charcoal/60 dark:text-dark-text/60">
+                            <div className="text-sm text-dark-text/60">
                               {event.time}
                             </div>
                           </div>
                         </div>
 
-                        <div className="flex items-center text-rich-charcoal/80 dark:text-dark-text/80">
-                          <MapPin className="w-5 h-5 mr-3 text-deep-coral dark:text-neon-pink" />
+                        <div className="flex items-center text-dark-text/80">
+                          <MapPin className="w-5 h-5 mr-3 text-neon-pink" />
                           <div>
-                            <div className="font-medium">{event.location}</div>
-                            <div className="text-sm text-rich-charcoal/60 dark:text-dark-text/60">
+                            <div className="font-medium text-soft-white">{event.location}</div>
+                            <div className="text-sm text-dark-text/60">
                               {event.address}
                             </div>
                           </div>
                         </div>
 
-                        <div className="flex items-center text-rich-charcoal/80 dark:text-dark-text/80">
-                          <Users className="w-5 h-5 mr-3 text-deep-coral dark:text-neon-pink" />
+                        <div className="flex items-center text-dark-text/80">
+                          <Users className="w-5 h-5 mr-3 text-neon-pink" />
                           <div>
-                            <div className="font-medium">
+                            <div className="font-medium text-soft-white">
                               {event.expectedDonors} Expected Donors
                             </div>
-                            <div className="text-sm text-rich-charcoal/60 dark:text-dark-text/60">
+                            <div className="text-sm text-dark-text/60">
                               {event.spotsLeft} spots remaining
                             </div>
                           </div>
                         </div>
 
-                        <div className="flex items-center text-rich-charcoal/80 dark:text-dark-text/80">
-                          <Heart className="w-5 h-5 mr-3 text-deep-coral dark:text-neon-pink" fill="currentColor" />
+                        <div className="flex items-center text-dark-text/80">
+                          <Heart className="w-5 h-5 mr-3 text-neon-pink" fill="currentColor" />
                           <div>
-                            <div className="font-medium">Organized by</div>
-                            <div className="text-sm text-rich-charcoal/60 dark:text-dark-text/60">
+                            <div className="font-medium text-soft-white">Organized by</div>
+                            <div className="text-sm text-dark-text/60">
                               {event.organizer}
                             </div>
                           </div>
@@ -205,16 +214,16 @@ const Events = () => {
                       {/* Progress Bar */}
                       <div className="mb-6">
                         <div className="flex justify-between text-sm mb-2">
-                          <span className="text-rich-charcoal/60 dark:text-dark-text/60">
+                          <span className="text-dark-text/60">
                             Registration Progress
                           </span>
-                          <span className="text-rich-charcoal/60 dark:text-dark-text/60">
+                          <span className="text-dark-text/60">
                             {event.expectedDonors - event.spotsLeft}/{event.expectedDonors}
                           </span>
                         </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div className="w-full bg-gray-700 rounded-full h-2">
                           <div
-                            className="bg-gradient-to-r from-deep-coral to-soft-teal dark:from-neon-pink dark:to-electric-cyan h-2 rounded-full transition-all duration-300"
+                            className="bg-gradient-to-r from-neon-pink to-electric-cyan h-2 rounded-full transition-all duration-300"
                             style={{
                               width: `${((event.expectedDonors - event.spotsLeft) / event.expectedDonors) * 100}%`
                             }}
@@ -232,7 +241,7 @@ const Events = () => {
                               ? 'bg-green-500 hover:bg-green-600 text-white'
                               : event.spotsLeft === 0
                               ? 'bg-gray-400 cursor-not-allowed text-white'
-                              : 'bg-gradient-to-r from-deep-coral to-soft-teal dark:from-neon-pink dark:to-electric-cyan hover:from-deep-coral/90 hover:to-soft-teal/90 dark:hover:from-neon-pink/90 dark:hover:to-electric-cyan/90 text-white animate-glow'
+                              : 'bg-gradient-to-r from-neon-pink to-electric-cyan hover:from-neon-pink/90 hover:to-electric-cyan/90 text-white animate-glow'
                           }`}
                         >
                           {event.isRegistered ? (
@@ -260,13 +269,13 @@ const Events = () => {
           {/* Empty State */}
           {filteredEvents.length === 0 && (
             <div className="text-center py-12 animate-fade-in">
-              <div className="w-16 h-16 bg-deep-coral/10 dark:bg-neon-pink/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Search className="w-8 h-8 text-deep-coral dark:text-neon-pink" />
+              <div className="w-16 h-16 bg-neon-pink/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="w-8 h-8 text-neon-pink" />
               </div>
-              <h3 className="text-xl font-semibold text-rich-charcoal dark:text-soft-white mb-2">
+              <h3 className="text-xl font-semibold text-soft-white mb-2">
                 No events found
               </h3>
-              <p className="text-rich-charcoal/60 dark:text-dark-text/60">
+              <p className="text-dark-text/60">
                 Try adjusting your search to find more events.
               </p>
             </div>
