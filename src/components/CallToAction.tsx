@@ -5,7 +5,7 @@ import { Heart, Calendar, Users, Phone } from 'lucide-react';
 
 const CallToAction = () => {
   return (
-    <section className="py-20 bg-gradient-to-t from-black via-red-950/10 to-gray-900 relative overflow-hidden">
+    <section className="py-20 bg-black relative overflow-hidden">
       {/* Background Animation */}
       <div className="absolute inset-0">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-red-500/5 rounded-full blur-3xl animate-pulse" />
@@ -45,15 +45,15 @@ const CallToAction = () => {
 
         {/* Feature Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <div className="text-center p-8 backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300">
-            <Users className="w-12 h-12 text-blue-500 mx-auto mb-4" />
+          <div className="text-center p-8 backdrop-blur-sm bg-gray-900/50 rounded-2xl border border-red-500/20 hover:bg-gray-900/70 transition-all duration-300">
+            <Users className="w-12 h-12 text-red-500 mx-auto mb-4" />
             <h3 className="text-xl font-bold text-white mb-3">Join 15K+ Donors</h3>
             <p className="text-gray-300">
               Be part of our growing community of life-saving heroes
             </p>
           </div>
 
-          <div className="text-center p-8 backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300">
+          <div className="text-center p-8 backdrop-blur-sm bg-gray-900/50 rounded-2xl border border-red-500/20 hover:bg-gray-900/70 transition-all duration-300">
             <Heart className="w-12 h-12 text-red-500 mx-auto mb-4" fill="currentColor" />
             <h3 className="text-xl font-bold text-white mb-3">Save 3 Lives</h3>
             <p className="text-gray-300">
@@ -61,8 +61,8 @@ const CallToAction = () => {
             </p>
           </div>
 
-          <div className="text-center p-8 backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300">
-            <Calendar className="w-12 h-12 text-green-500 mx-auto mb-4" />
+          <div className="text-center p-8 backdrop-blur-sm bg-gray-900/50 rounded-2xl border border-red-500/20 hover:bg-gray-900/70 transition-all duration-300">
+            <Calendar className="w-12 h-12 text-red-500 mx-auto mb-4" />
             <h3 className="text-xl font-bold text-white mb-3">Flexible Scheduling</h3>
             <p className="text-gray-300">
               Book appointments at your convenience, 24/7 online
@@ -71,7 +71,7 @@ const CallToAction = () => {
         </div>
 
         {/* Emergency Contact */}
-        <div className="text-center p-8 backdrop-blur-sm bg-gradient-to-r from-red-500/10 to-orange-500/10 rounded-2xl border border-red-500/20">
+        <div className="text-center p-8 backdrop-blur-sm bg-gradient-to-r from-red-500/10 to-red-600/10 rounded-2xl border border-red-500/20">
           <Phone className="w-8 h-8 text-red-500 mx-auto mb-4" />
           <h3 className="text-2xl font-bold text-white mb-2">Emergency Blood Request?</h3>
           <p className="text-gray-300 mb-4">
