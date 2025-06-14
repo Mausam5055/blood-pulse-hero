@@ -743,7 +743,7 @@ const BlogPost = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .article-content {
           color: #EAEAEA;
           line-height: 1.8;

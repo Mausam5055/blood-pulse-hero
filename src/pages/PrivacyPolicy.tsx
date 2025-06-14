@@ -129,16 +129,16 @@ const PrivacyPolicy = () => {
                   <h2 className="text-2xl font-bold text-soft-white">How We Protect Your Information</h2>
                 </div>
 
-                <div class="security-measures">
-                  <div class="security-item">
+                <div className="security-measures">
+                  <div className="security-item">
                     <h4>Technical Safeguards</h4>
                     <p>We use industry-standard encryption, secure servers, and regular security audits to protect your data.</p>
                   </div>
-                  <div class="security-item">
+                  <div className="security-item">
                     <h4>Physical Security</h4>
                     <p>Our facilities have restricted access, surveillance systems, and secure storage for physical records.</p>
                   </div>
-                  <div class="security-item">
+                  <div className="security-item">
                     <h4>Administrative Controls</h4>
                     <p>Staff receive privacy training and access is limited to authorized personnel only.</p>
                   </div>
@@ -266,7 +266,7 @@ const PrivacyPolicy = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .privacy-content {
           color: #EAEAEA;
           line-height: 1.7;

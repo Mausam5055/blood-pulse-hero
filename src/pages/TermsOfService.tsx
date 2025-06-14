@@ -240,20 +240,20 @@ const TermsOfService = () => {
                 <p>These terms are governed by the laws of the state where our services are provided, without regard to conflict of law principles.</p>
                 
                 <h3>Resolution Process</h3>
-                <div class="process-steps">
-                  <div class="step">
+                <div className="process-steps">
+                  <div className="step">
                     <h4>Step 1: Direct Communication</h4>
                     <p>Contact our management team to discuss any concerns or disputes.</p>
                   </div>
-                  <div class="step">
+                  <div className="step">
                     <h4>Step 2: Formal Complaint</h4>
                     <p>Submit a written complaint through our formal complaint process.</p>
                   </div>
-                  <div class="step">
+                  <div className="step">
                     <h4>Step 3: Mediation</h4>
                     <p>If needed, we may engage in mediation to resolve disputes.</p>
                   </div>
-                  <div class="step">
+                  <div className="step">
                     <h4>Step 4: Legal Action</h4>
                     <p>Legal proceedings in the appropriate jurisdiction as a last resort.</p>
                   </div>
@@ -308,7 +308,7 @@ const TermsOfService = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .terms-content {
           color: #EAEAEA;
           line-height: 1.7;
