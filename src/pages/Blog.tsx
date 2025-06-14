@@ -1,9 +1,10 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Calendar, User, ArrowRight, Clock } from 'lucide-react';
+import { Search, Calendar, User, ArrowRight, Clock, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
@@ -11,7 +12,7 @@ const Blog = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
 
-  const categories = ['All', 'Medical Science', 'Community Stories', 'Health Tips', 'Donation Process'];
+  const categories = ['Medical Science', 'Community Stories', 'Health Tips', 'Donation Process'];
 
   // Mock blog data - this would come from a database
   const blogPosts = [
@@ -24,7 +25,8 @@ const Blog = () => {
       readTime: '8 min read',
       category: 'Medical Science',
       image: 'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      tags: ['Blood Types', 'Medical Science', 'Donation Process']
+      tags: ['Blood Types', 'Medical Science', 'Donation Process'],
+      featured: true
     },
     {
       id: 2,
@@ -35,7 +37,8 @@ const Blog = () => {
       readTime: '6 min read',
       category: 'Community Stories',
       image: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      tags: ['Community', 'Donor Stories', 'Heroes']
+      tags: ['Community', 'Donor Stories', 'Heroes'],
+      featured: true
     },
     {
       id: 3,
@@ -61,10 +64,13 @@ const Blog = () => {
     },
   ];
 
-  const filteredPosts = blogPosts.filter(post => {
+  const featuredPosts = blogPosts.filter(post => post.featured);
+  const regularPosts = blogPosts.filter(post => !post.featured);
+
+  const filteredPosts = regularPosts.filter(post => {
     const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          post.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'All' || selectedCategory === '' || post.category === selectedCategory;
+    const matchesCategory = selectedCategory === '' || post.category === selectedCategory;
     
     return matchesSearch && matchesCategory;
   });
@@ -94,8 +100,67 @@ const Blog = () => {
             </p>
           </div>
 
+          {/* Featured Articles */}
+          <div className="mb-16">
+            <div className="flex items-center mb-8">
+              <Star className="w-6 h-6 text-neon-pink mr-3" />
+              <h2 className="text-3xl font-bold text-soft-white">Featured Articles</h2>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {featuredPosts.map((post, index) => (
+                <div
+                  key={`featured-${post.id}`}
+                  className="glass-card rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300 animate-fade-in"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <div className="relative h-64 overflow-hidden">
+                    <img
+                      src={post.image}
+                      alt={post.title}
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                    />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <Badge className="bg-neon-pink/90 text-white">
+                        Featured
+                      </Badge>
+                      <Badge className="bg-electric-cyan/90 text-white">
+                        {post.category}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <div className="p-6">
+                    <h3 className="text-2xl font-bold text-soft-white mb-3 line-clamp-2">
+                      {post.title}
+                    </h3>
+                    <p className="text-dark-text/70 mb-4 line-clamp-3">
+                      {post.excerpt}
+                    </p>
+
+                    <div className="flex items-center text-sm text-dark-text/60 mb-4">
+                      <User className="w-4 h-4 mr-1" />
+                      <span className="mr-4">{post.author}</span>
+                      <Calendar className="w-4 h-4 mr-1" />
+                      <span className="mr-4">{new Date(post.date).toLocaleDateString()}</span>
+                      <Clock className="w-4 h-4 mr-1" />
+                      <span>{post.readTime}</span>
+                    </div>
+
+                    <Link to={`/blog/${post.id}`}>
+                      <Button className="bg-gradient-to-r from-neon-pink to-electric-cyan text-white hover:scale-105 transition-all duration-300 w-full">
+                        Read Full Article
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Filters */}
           <div className="glass-card p-6 rounded-2xl mb-8 animate-slide-up">
+            <h2 className="text-2xl font-bold text-soft-white mb-4">More Articles</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neon-pink" />
@@ -120,14 +185,20 @@ const Blog = () => {
                 </SelectContent>
               </Select>
 
-              <Button className="bg-gradient-to-r from-neon-pink to-electric-cyan text-white">
+              <Button 
+                onClick={() => {
+                  setSearchTerm('');
+                  setSelectedCategory('');
+                }}
+                className="bg-gradient-to-r from-neon-pink to-electric-cyan text-white"
+              >
                 <Search className="w-4 h-4 mr-2" />
-                Apply Filters
+                Clear Filters
               </Button>
             </div>
           </div>
 
-          {/* Blog Posts Grid */}
+          {/* Regular Blog Posts Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredPosts.map((post, index) => (
               <div
@@ -165,20 +236,18 @@ const Blog = () => {
                     <span>{post.readTime}</span>
                   </div>
 
-                  <div className="flex justify-between items-center">
-                    <Link to={`/blog/${post.id}`}>
-                      <Button className="bg-gradient-to-r from-neon-pink to-electric-cyan text-white hover:scale-105 transition-all duration-300">
-                        Read More
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </Button>
-                    </Link>
-                  </div>
+                  <Link to={`/blog/${post.id}`}>
+                    <Button className="bg-gradient-to-r from-neon-pink to-electric-cyan text-white hover:scale-105 transition-all duration-300 w-full">
+                      Read More
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </Link>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Empty State - "No articles found" */}
+          {/* Empty State */}
           {filteredPosts.length === 0 && (
             <div className="text-center py-20 animate-fade-in">
               <div className="max-w-md mx-auto">
@@ -192,20 +261,15 @@ const Blog = () => {
                   We couldn't find any articles matching your criteria. 
                   Try adjusting your search or filter settings to discover more content.
                 </p>
-                <div className="space-y-4">
-                  <Button 
-                    onClick={() => {
-                      setSearchTerm('');
-                      setSelectedCategory('All');
-                    }}
-                    className="bg-gradient-to-r from-neon-pink to-electric-cyan text-white px-8 py-3 rounded-full hover:scale-105 transition-all duration-300"
-                  >
-                    Clear All Filters
-                  </Button>
-                  <p className="text-sm text-dark-text/50">
-                    Or explore our other categories for more great content!
-                  </p>
-                </div>
+                <Button 
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedCategory('');
+                  }}
+                  className="bg-gradient-to-r from-neon-pink to-electric-cyan text-white px-8 py-3 rounded-full hover:scale-105 transition-all duration-300"
+                >
+                  Clear All Filters
+                </Button>
               </div>
             </div>
           )}
