@@ -10,20 +10,15 @@ const Hero = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      {/* Fullscreen Video Background */}
+      {/* Fullscreen Image Background */}
       <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
+        <img
+          src="https://images.unsplash.com/photo-1615461066841-6116e61058f4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80"
+          alt="Blood donation hero background"
           className="w-full h-full object-cover"
-        >
-          <source src="https://videos.pexels.com/video-files/6823543/6823543-uhd_2560_1440_25fps.mp4" type="video/mp4" />
-          <source src="https://videos.pexels.com/video-files/7579757/7579757-uhd_2560_1440_25fps.mp4" type="video/mp4" />
-        </video>
+        />
         {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/40 dark:bg-black/60" />
+        <div className="absolute inset-0 bg-black/60" />
       </div>
 
       <Navbar />
@@ -33,13 +28,13 @@ const Hero = () => {
         <div className="text-center max-w-4xl mx-auto">
           {/* Simple Icon */}
           <div className="flex justify-center mb-8">
-            <Heart className="w-20 h-20 text-deep-coral dark:text-neon-pink" fill="currentColor" />
+            <Heart className="w-20 h-20 text-neon-pink" fill="currentColor" />
           </div>
 
           {/* Main Headline */}
           <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white leading-tight">
             Be a Hero in
-            <span className="block text-deep-coral dark:text-neon-pink mt-2">Real Life</span>
+            <span className="block text-neon-pink mt-2">Real Life</span>
           </h1>
 
           {/* Subheadline */}
@@ -53,7 +48,7 @@ const Hero = () => {
             <Button 
               size="lg" 
               onClick={() => navigate('/register')}
-              className="bg-deep-coral hover:bg-deep-coral/90 dark:bg-neon-pink dark:hover:bg-neon-pink/90 text-white px-8 py-4 text-lg font-semibold rounded-full transition-all duration-300 shadow-lg"
+              className="bg-neon-pink hover:bg-neon-pink/90 text-white px-8 py-4 text-lg font-semibold rounded-full transition-all duration-300 shadow-lg"
             >
               <Heart className="w-5 h-5 mr-2" fill="currentColor" />
               Become a Donor
@@ -63,7 +58,7 @@ const Hero = () => {
               size="lg" 
               variant="outline" 
               onClick={() => navigate('/request')}
-              className="border-2 border-white text-white hover:bg-white hover:text-rich-charcoal dark:hover:text-space-navy px-8 py-4 text-lg font-semibold rounded-full transition-all duration-300 backdrop-blur-sm"
+              className="border-2 border-white text-white hover:bg-white hover:text-space-navy px-8 py-4 text-lg font-semibold rounded-full transition-all duration-300 backdrop-blur-sm"
             >
               <Droplets className="w-5 h-5 mr-2" />
               Request Blood
@@ -72,15 +67,15 @@ const Hero = () => {
 
           {/* Simple Stats */}
           <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
-            <div className="text-center backdrop-blur-sm bg-white/10 dark:bg-white/5 p-6 rounded-xl border border-white/20">
+            <div className="text-center backdrop-blur-sm bg-white/10 p-6 rounded-xl border border-white/20">
               <div className="text-3xl font-bold text-white mb-2">25,000+</div>
               <div className="text-white/80">Lives Saved</div>
             </div>
-            <div className="text-center backdrop-blur-sm bg-white/10 dark:bg-white/5 p-6 rounded-xl border border-white/20">
+            <div className="text-center backdrop-blur-sm bg-white/10 p-6 rounded-xl border border-white/20">
               <div className="text-3xl font-bold text-white mb-2">15,000+</div>
               <div className="text-white/80">Active Donors</div>
             </div>
-            <div className="text-center backdrop-blur-sm bg-white/10 dark:bg-white/5 p-6 rounded-xl border border-white/20">
+            <div className="text-center backdrop-blur-sm bg-white/10 p-6 rounded-xl border border-white/20">
               <div className="text-3xl font-bold text-white mb-2">50+</div>
               <div className="text-white/80">Partner Hospitals</div>
             </div>
