@@ -61,7 +61,7 @@ const Navbar = () => {
             <Button 
               variant="ghost" 
               onClick={() => navigate('/auth?mode=login')}
-              className="text-dark-text/70 hover:text-electric-cyan"
+              className="text-dark-text/70 hover:text-neon-pink hover:bg-transparent"
             >
               <LogIn className="w-4 h-4 mr-2" />
               Login
@@ -111,7 +111,7 @@ const Navbar = () => {
                     navigate('/auth?mode=login');
                     setIsMobileMenuOpen(false);
                   }}
-                  className="text-dark-text/70 hover:text-electric-cyan justify-start"
+                  className="text-dark-text/70 hover:text-neon-pink hover:bg-transparent justify-start"
                 >
                   <LogIn className="w-4 h-4 mr-2" />
                   Login
