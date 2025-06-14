@@ -5,6 +5,7 @@ import Hero from '../components/Hero';
 import DonorStats from '../components/DonorStats';
 import HowItWorks from '../components/HowItWorks';
 import Testimonials from '../components/Testimonials';
+import MeetTheCreator from '../components/MeetTheCreator';
 import CallToAction from '../components/CallToAction';
 
 const Index = () => {
@@ -14,6 +15,7 @@ const Index = () => {
       <DonorStats />
       <HowItWorks />
       <Testimonials />
+      <MeetTheCreator />
       <CallToAction />
       
       {/* Footer */}

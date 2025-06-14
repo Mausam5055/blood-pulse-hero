@@ -58,11 +58,18 @@ const Navbar = () => {
 
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" className="text-dark-text/70 hover:text-electric-cyan">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate('/auth?mode=login')}
+              className="text-dark-text/70 hover:text-electric-cyan"
+            >
               <LogIn className="w-4 h-4 mr-2" />
               Login
             </Button>
-            <Button className="bg-gradient-to-r from-neon-pink to-neon-pink/80 hover:from-neon-pink/90 hover:to-neon-pink text-white">
+            <Button 
+              onClick={() => navigate('/auth?mode=signup')}
+              className="bg-gradient-to-r from-neon-pink to-neon-pink/80 hover:from-neon-pink/90 hover:to-neon-pink text-white"
+            >
               <User className="w-4 h-4 mr-2" />
               Register
             </Button>
@@ -98,11 +105,24 @@ const Navbar = () => {
                 </button>
               ))}
               <div className="flex flex-col space-y-2 px-3 pt-4">
-                <Button variant="ghost" className="text-dark-text/70 hover:text-electric-cyan justify-start">
+                <Button 
+                  variant="ghost" 
+                  onClick={() => {
+                    navigate('/auth?mode=login');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="text-dark-text/70 hover:text-electric-cyan justify-start"
+                >
                   <LogIn className="w-4 h-4 mr-2" />
                   Login
                 </Button>
-                <Button className="bg-gradient-to-r from-neon-pink to-neon-pink/80 text-white justify-start">
+                <Button 
+                  onClick={() => {
+                    navigate('/auth?mode=signup');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="bg-gradient-to-r from-neon-pink to-neon-pink/80 text-white justify-start"
+                >
                   <User className="w-4 h-4 mr-2" />
                   Register
                 </Button>
