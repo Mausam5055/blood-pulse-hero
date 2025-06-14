@@ -6,7 +6,6 @@ import HowItWorks from '../components/HowItWorks';
 import Testimonials from '../components/Testimonials';
 import MeetTheCreator from '../components/MeetTheCreator';
 import CallToAction from '../components/CallToAction';
-import Footer from '../components/Footer';
 
 const Index = () => {
   return (
@@ -17,7 +16,6 @@ const Index = () => {
       <Testimonials />
       <MeetTheCreator />
       <CallToAction />
-      <Footer />
     </div>
   );
 };
