@@ -90,18 +90,6 @@ const CallToAction = () => {
             </Button>
           </div>
         </div>
-
-        {/* Footer */}
-        <div className="mt-16 pt-8 border-t border-gray-800 text-center">
-          <p className="text-gray-400">
-            © 2024 LifeGiver. Saving lives, one donation at a time.
-          </p>
-          <div className="flex justify-center space-x-6 mt-4">
-            <a href="#" className="text-gray-400 hover:text-red-500 transition-colors">Privacy Policy</a>
-            <a href="#" className="text-gray-400 hover:text-red-500 transition-colors">Terms of Service</a>
-            <a href="#" className="text-gray-400 hover:text-red-500 transition-colors">Contact Us</a>
-          </div>
-        </div>
       </div>
     </section>
   );
