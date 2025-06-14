@@ -12,7 +12,7 @@ const Blog = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
 
-  const categories = ['Medical Science', 'Community Stories', 'Health Tips', 'Donation Process'];
+  const categories = ['Medical Science', 'Community Stories', 'Health Tips', 'Donation Process', 'Indian Healthcare', 'Regional Updates'];
 
   // Mock blog data - this would come from a database
   const blogPosts = [
@@ -30,26 +30,26 @@ const Blog = () => {
     },
     {
       id: 2,
-      title: 'Community Heroes: Stories of Life-Saving Blood Donations',
-      excerpt: 'Read inspiring stories from our donor community and discover how everyday heroes are making a life-saving difference.',
+      title: 'Community Heroes: Stories of Life-Saving Blood Donations in Assam',
+      excerpt: 'Read inspiring stories from our donor community in Northeast India and discover how everyday heroes are making a life-saving difference.',
       author: 'Community Team',
       date: '2024-01-10',
       readTime: '6 min read',
       category: 'Community Stories',
       image: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      tags: ['Community', 'Donor Stories', 'Heroes'],
+      tags: ['Community', 'Donor Stories', 'Heroes', 'Assam'],
       featured: true
     },
     {
       id: 3,
-      title: 'The Importance of Regular Blood Donation: A Guide for New Donors',
-      excerpt: 'Learn why regular blood donation is vital for maintaining a stable blood supply and how you can become a life-saving hero.',
-      author: 'Donation Advocate',
-      date: '2023-12-20',
-      readTime: '7 min read',
-      category: 'Donation Process',
-      image: 'https://images.unsplash.com/photo-1526256260728-5913961cae9d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      tags: ['Regular Donation', 'New Donors', 'Blood Supply']
+      title: 'Blood Donation in Rural India: Bridging the Healthcare Gap',
+      excerpt: 'Exploring the challenges and solutions for blood donation in rural areas of India, with focus on mobile blood collection units.',
+      author: 'Dr. Priya Sharma',
+      date: '2024-01-08',
+      readTime: '10 min read',
+      category: 'Indian Healthcare',
+      image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      tags: ['Rural Healthcare', 'Mobile Units', 'India']
     },
     {
       id: 4,
@@ -62,6 +62,72 @@ const Blog = () => {
       image: 'https://images.unsplash.com/photo-1532938314630-e9439f347c43?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       tags: ['Health Tips', 'Blood Donation', 'Donor Preparation']
     },
+    {
+      id: 5,
+      title: 'AIIMS Guwahati: Leading Blood Banking Innovation in Northeast India',
+      excerpt: 'How AIIMS Guwahati is revolutionizing blood banking services and setting new standards for healthcare in the region.',
+      author: 'Dr. Rajesh Kumar',
+      date: '2024-01-05',
+      readTime: '7 min read',
+      category: 'Regional Updates',
+      image: 'https://images.unsplash.com/photo-1551076805-e1869033e561?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      tags: ['AIIMS', 'Guwahati', 'Innovation', 'Northeast']
+    },
+    {
+      id: 6,
+      title: 'Traditional Medicine Meets Modern Blood Banking in Assam',
+      excerpt: 'Exploring how traditional Ayurvedic practices complement modern blood donation and healthcare in Assamese communities.',
+      author: 'Dr. Anita Bora',
+      date: '2024-01-03',
+      readTime: '9 min read',
+      category: 'Indian Healthcare',
+      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      tags: ['Ayurveda', 'Traditional Medicine', 'Assam', 'Healthcare']
+    },
+    {
+      id: 7,
+      title: 'Festival of Giving: How Bihu Celebrations Boost Blood Donations',
+      excerpt: 'Learn how Assamese festivals, particularly Bihu, have become platforms for community blood donation drives.',
+      author: 'Cultural Reporter',
+      date: '2024-01-01',
+      readTime: '6 min read',
+      category: 'Community Stories',
+      image: 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      tags: ['Bihu', 'Festivals', 'Community', 'Assam']
+    },
+    {
+      id: 8,
+      title: 'Tea Garden Workers: The Unsung Heroes of Blood Donation',
+      excerpt: 'Stories from tea estates across Assam where workers regularly participate in blood donation drives to support their communities.',
+      author: 'Field Correspondent',
+      date: '2023-12-28',
+      readTime: '8 min read',
+      category: 'Community Stories',
+      image: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      tags: ['Tea Gardens', 'Workers', 'Community', 'Assam']
+    },
+    {
+      id: 9,
+      title: 'Digital Revolution in Indian Blood Banks: Apps and Technology',
+      excerpt: 'How technology is transforming blood donation in India with mobile apps, online registration, and digital tracking systems.',
+      author: 'Tech Analyst',
+      date: '2023-12-25',
+      readTime: '7 min read',
+      category: 'Medical Science',
+      image: 'https://images.unsplash.com/photo-1526256262350-7da7584cf5eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      tags: ['Technology', 'Digital Health', 'Apps', 'Innovation']
+    },
+    {
+      id: 10,
+      title: 'Understanding Thalassemia: A Growing Concern in Northeast India',
+      excerpt: 'Exploring the prevalence of thalassemia in Northeast India and the critical role of regular blood transfusions.',
+      author: 'Dr. Meera Das',
+      date: '2023-12-22',
+      readTime: '11 min read',
+      category: 'Medical Science',
+      image: 'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      tags: ['Thalassemia', 'Northeast India', 'Transfusion', 'Medical']
+    }
   ];
 
   const featuredPosts = blogPosts.filter(post => post.featured);
@@ -96,7 +162,7 @@ const Blog = () => {
               Explore Our Blog
             </h1>
             <p className="text-xl text-dark-text/70">
-              Stay updated with the latest news, stories, and insights from our community.
+              Stay updated with the latest news, stories, and insights from Indian healthcare and blood donation community.
             </p>
           </div>
 
