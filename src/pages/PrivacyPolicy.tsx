@@ -19,8 +19,8 @@ const PrivacyPolicy = () => {
 
       <Navbar />
       
-      <div className="relative z-10 pt-20 pb-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
+      <div className="relative z-10 pt-20 pb-16 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
+        <div className="w-full max-w-none">
           {/* Back Button */}
           <div className="mb-8 animate-fade-in">
             <Link to="/">
@@ -32,14 +32,14 @@ const PrivacyPolicy = () => {
           </div>
 
           {/* Header */}
-          <div className="glass-card p-8 rounded-2xl mb-8 animate-slide-up">
+          <div className="glass-card p-6 sm:p-8 lg:p-12 rounded-2xl mb-8 animate-slide-up">
             <div className="flex items-center mb-6">
               <Shield className="w-8 h-8 text-neon-pink mr-4" />
-              <h1 className="text-4xl md:text-5xl font-bold text-soft-white">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-soft-white">
                 Privacy Policy
               </h1>
             </div>
-            <p className="text-xl text-dark-text/70 leading-relaxed">
+            <p className="text-lg sm:text-xl lg:text-2xl text-dark-text/70 leading-relaxed">
               Your privacy is important to us. This policy explains how we collect, use, and protect your personal information when you use our blood donation services.
             </p>
             <div className="mt-6 flex items-center text-sm text-dark-text/60">
@@ -49,7 +49,7 @@ const PrivacyPolicy = () => {
           </div>
 
           {/* Content */}
-          <div className="glass-card p-8 rounded-2xl animate-slide-up">
+          <div className="glass-card p-6 sm:p-8 lg:p-12 rounded-2xl animate-slide-up">
             <div className="privacy-content">
               <section className="mb-8">
                 <div className="flex items-center mb-4">
