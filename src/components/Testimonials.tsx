@@ -39,7 +39,7 @@ const Testimonials = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
+    }, 6000);
 
     return () => clearInterval(interval);
   }, [testimonials.length]);
@@ -53,102 +53,142 @@ const Testimonials = () => {
   };
 
   return (
-    <section className="py-20 bg-gradient-to-b from-black to-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Stories from Our Heroes
+    <section className="py-24 bg-gradient-to-b from-black via-gray-900/50 to-black relative overflow-hidden">
+      {/* Background Animation */}
+      <div className="absolute inset-0">
+        <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-red-500/5 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-neon-pink/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Enhanced Header */}
+        <div className="text-center mb-20 animate-fade-in">
+          <div className="inline-flex items-center justify-center p-2 bg-red-500/10 rounded-full mb-6">
+            <Quote className="w-8 h-8 text-red-500" />
+          </div>
+          <h2 className="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-red-200 to-red-400 mb-8 leading-tight">
+            Stories from Our
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-neon-pink animate-pulse">
+              Heroes
+            </span>
           </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          <div className="w-24 h-1 bg-gradient-to-r from-red-500 to-neon-pink mx-auto mb-8 rounded-full"></div>
+          <p className="text-xl md:text-2xl text-gray-300 max-w-4xl mx-auto font-light leading-relaxed">
             Hear from donors, recipients, and medical professionals about their 
-            experiences with blood donation and how it has impacted their lives.
+            <span className="text-red-400 font-medium"> life-changing experiences</span> with blood donation
           </p>
         </div>
 
-        <div className="relative max-w-4xl mx-auto">
-          {/* Main Testimonial */}
-          <div className="text-center p-8 backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10">
-            <div className="mb-8">
-              <Quote className="w-12 h-12 text-red-500 mx-auto mb-6" />
-              <p className="text-xl md:text-2xl text-gray-200 leading-relaxed mb-8 font-light italic">
-                "{testimonials[currentTestimonial].quote}"
-              </p>
+        <div className="relative max-w-5xl mx-auto">
+          {/* Main Testimonial with Enhanced Animation */}
+          <div 
+            key={currentTestimonial}
+            className="text-center p-12 backdrop-blur-lg bg-gradient-to-br from-white/10 to-white/5 rounded-3xl border border-white/20 shadow-2xl animate-fade-in transform transition-all duration-700 hover:scale-105 hover:shadow-red-500/20"
+          >
+            <div className="mb-10">
+              <div className="relative inline-block mb-8">
+                <Quote className="w-16 h-16 text-red-500 mx-auto animate-pulse" />
+                <div className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full animate-ping opacity-20"></div>
+              </div>
+              <blockquote className="text-2xl md:text-3xl lg:text-4xl text-gray-100 leading-relaxed mb-10 font-light italic relative">
+                <span className="text-6xl text-red-500/30 absolute -top-4 -left-4">"</span>
+                {testimonials[currentTestimonial].quote}
+                <span className="text-6xl text-red-500/30 absolute -bottom-8 -right-4">"</span>
+              </blockquote>
             </div>
 
-            <div className="flex items-center justify-center space-x-4">
-              <img
-                src={testimonials[currentTestimonial].image}
-                alt={testimonials[currentTestimonial].name}
-                className="w-16 h-16 rounded-full border-2 border-red-500"
-              />
+            {/* Enhanced Author Info */}
+            <div className="flex items-center justify-center space-x-6 animate-slide-up">
+              <div className="relative">
+                <img
+                  src={testimonials[currentTestimonial].image}
+                  alt={testimonials[currentTestimonial].name}
+                  className="w-20 h-20 rounded-full border-4 border-red-500 shadow-lg transition-transform duration-300 hover:scale-110"
+                />
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-2 border-white rounded-full"></div>
+              </div>
               <div className="text-left">
-                <h4 className="text-xl font-bold text-white">
+                <h4 className="text-2xl font-bold text-white mb-1 tracking-wide">
                   {testimonials[currentTestimonial].name}
                 </h4>
-                <p className="text-gray-400">
+                <p className="text-lg text-red-400 font-medium mb-2">
                   {testimonials[currentTestimonial].role}
                 </p>
                 {testimonials[currentTestimonial].donations > 0 && (
-                  <p className="text-red-500 text-sm">
-                    {testimonials[currentTestimonial].donations} donations
-                  </p>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                    <p className="text-red-300 text-sm font-medium">
+                      {testimonials[currentTestimonial].donations} life-saving donations
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Navigation Buttons */}
+          {/* Enhanced Navigation Buttons */}
           <button
             onClick={prevTestimonial}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-12 w-10 h-10 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center text-white transition-all duration-300"
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-16 w-14 h-14 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 rounded-full flex items-center justify-center text-white transition-all duration-300 shadow-lg hover:shadow-red-500/30 hover:scale-110 group"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-6 h-6 transition-transform group-hover:-translate-x-1" />
           </button>
 
           <button
             onClick={nextTestimonial}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-12 w-10 h-10 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center text-white transition-all duration-300"
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-16 w-14 h-14 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 rounded-full flex items-center justify-center text-white transition-all duration-300 shadow-lg hover:shadow-red-500/30 hover:scale-110 group"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-6 h-6 transition-transform group-hover:translate-x-1" />
           </button>
 
-          {/* Dots Indicator */}
-          <div className="flex justify-center mt-8 space-x-2">
+          {/* Enhanced Dots Indicator */}
+          <div className="flex justify-center mt-12 space-x-3">
             {testimonials.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentTestimonial(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                className={`relative transition-all duration-500 ${
                   index === currentTestimonial
-                    ? 'bg-red-500 scale-125'
-                    : 'bg-gray-600 hover:bg-gray-500'
+                    ? 'w-12 h-4 bg-gradient-to-r from-red-500 to-neon-pink rounded-full'
+                    : 'w-4 h-4 bg-gray-600 hover:bg-red-400 rounded-full hover:scale-125'
                 }`}
-              />
+              >
+                {index === currentTestimonial && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-neon-pink rounded-full animate-pulse"></div>
+                )}
+              </button>
             ))}
           </div>
         </div>
 
-        {/* Additional Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
+        {/* Enhanced Additional Testimonials Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-20">
           {testimonials.slice(0, 3).map((testimonial, index) => (
             <div
               key={index}
-              className="p-6 backdrop-blur-sm bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300"
+              className="group p-8 backdrop-blur-sm bg-gradient-to-br from-white/10 to-white/5 rounded-2xl border border-white/10 hover:border-red-500/30 transition-all duration-500 hover:scale-105 hover:shadow-lg hover:shadow-red-500/10 animate-fade-in"
+              style={{ animationDelay: `${index * 200}ms` }}
             >
-              <div className="flex items-center space-x-3 mb-4">
-                <img
-                  src={testimonial.image}
-                  alt={testimonial.name}
-                  className="w-12 h-12 rounded-full border border-red-500"
-                />
+              <div className="flex items-center space-x-4 mb-6">
+                <div className="relative">
+                  <img
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    className="w-14 h-14 rounded-full border-2 border-red-500/50 group-hover:border-red-400 transition-colors duration-300"
+                  />
+                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+                </div>
                 <div>
-                  <h5 className="font-semibold text-white">{testimonial.name}</h5>
-                  <p className="text-sm text-gray-400">{testimonial.role}</p>
+                  <h5 className="font-bold text-white text-lg group-hover:text-red-200 transition-colors duration-300">
+                    {testimonial.name}
+                  </h5>
+                  <p className="text-sm text-red-400 font-medium">{testimonial.role}</p>
                 </div>
               </div>
-              <p className="text-gray-300 text-sm leading-relaxed">
+              <p className="text-gray-300 leading-relaxed group-hover:text-gray-200 transition-colors duration-300">
                 "{testimonial.quote.substring(0, 120)}..."
               </p>
+              <div className="mt-4 w-full h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent"></div>
             </div>
           ))}
         </div>
