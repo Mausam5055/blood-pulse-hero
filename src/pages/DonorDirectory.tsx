@@ -109,7 +109,6 @@ const DonorDirectory = () => {
                   <SelectValue placeholder="Blood Group" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Blood Groups</SelectItem>
                   {bloodGroups.map((group) => (
                     <SelectItem key={group} value={group}>
                       {group}
@@ -123,7 +122,6 @@ const DonorDirectory = () => {
                   <SelectValue placeholder="Location" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Locations</SelectItem>
                   <SelectItem value="New York">New York</SelectItem>
                   <SelectItem value="Los Angeles">Los Angeles</SelectItem>
                   <SelectItem value="Chicago">Chicago</SelectItem>
