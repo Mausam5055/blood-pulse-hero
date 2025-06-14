@@ -55,6 +55,25 @@
   body {
     @apply bg-background text-foreground transition-colors duration-500;
   }
+
+  /* Hide all scrollbars */
+  * {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+  }
+
+  *::-webkit-scrollbar {
+    display: none; /* WebKit */
+  }
+
+  html, body {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  html::-webkit-scrollbar, body::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* Custom glassmorphism styles */

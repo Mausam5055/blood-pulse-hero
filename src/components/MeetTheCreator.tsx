@@ -5,7 +5,7 @@ import { Github, Linkedin, Mail, Heart } from 'lucide-react';
 
 const MeetTheCreator = () => {
   return (
-    <section className="py-20 px-4 bg-gradient-to-br from-space-navy to-electric-cyan/10">
+    <section className="py-20 px-4 bg-gradient-to-br from-space-navy to-electric-cyan/10 min-h-screen flex items-center">
       <div className="w-full max-w-none xl:px-12 2xl:px-16">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-soft-white mb-4">
@@ -16,14 +16,14 @@ const MeetTheCreator = () => {
           </p>
         </div>
 
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <Card className="glass-card border-electric-cyan/20 overflow-hidden">
             <CardContent className="p-0">
-              <div className="flex flex-col lg:flex-row">
+              <div className="flex flex-col lg:flex-row min-h-[600px]">
                 {/* Creator Photo */}
                 <div className="lg:w-1/2 p-8 lg:p-12 flex items-center justify-center bg-gradient-to-br from-neon-pink/10 to-electric-cyan/10">
                   <div className="relative">
-                    <div className="w-64 h-64 rounded-full overflow-hidden border-4 border-neon-pink/30 shadow-2xl">
+                    <div className="w-80 h-80 rounded-full overflow-hidden border-4 border-neon-pink/30 shadow-2xl">
                       <img
                         src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
                         alt="App Creator"
@@ -38,14 +38,14 @@ const MeetTheCreator = () => {
 
                 {/* Creator Info */}
                 <div className="lg:w-1/2 p-8 lg:p-12 flex flex-col justify-center">
-                  <h3 className="text-3xl font-bold text-soft-white mb-4">
+                  <h3 className="text-4xl font-bold text-soft-white mb-4">
                     Alex Johnson
                   </h3>
-                  <p className="text-lg text-neon-pink font-semibold mb-6">
+                  <p className="text-xl text-neon-pink font-semibold mb-8">
                     Full Stack Developer & Life Enthusiast
                   </p>
                   
-                  <div className="space-y-4 text-dark-text/80 mb-8">
+                  <div className="space-y-6 text-dark-text/80 mb-10 text-lg">
                     <p>
                       "I created LifeGiver after witnessing firsthand how difficult it can be to find blood donors during emergencies. 
                       Technology should bridge the gap between those who need help and those willing to help."
@@ -54,34 +54,34 @@ const MeetTheCreator = () => {
                       "Every line of code in this application was written with the hope that it might save a life. 
                       Blood donation is one of the most selfless acts of humanity, and I wanted to make it more accessible."
                     </p>
-                    <p className="text-electric-cyan font-medium">
+                    <p className="text-electric-cyan font-medium text-xl">
                       "Together, we can build a community where no one has to search desperately for life-saving blood."
                     </p>
                   </div>
 
                   {/* Social Links */}
-                  <div className="flex space-x-4">
+                  <div className="flex space-x-6">
                     <a
                       href="https://github.com"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-3 rounded-full bg-space-navy/50 text-soft-white hover:bg-neon-pink/20 hover:text-neon-pink transition-all duration-300"
+                      className="p-4 rounded-full bg-space-navy/50 text-soft-white hover:bg-neon-pink/20 hover:text-neon-pink transition-all duration-300"
                     >
-                      <Github className="w-5 h-5" />
+                      <Github className="w-6 h-6" />
                     </a>
                     <a
                       href="https://linkedin.com"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-3 rounded-full bg-space-navy/50 text-soft-white hover:bg-electric-cyan/20 hover:text-electric-cyan transition-all duration-300"
+                      className="p-4 rounded-full bg-space-navy/50 text-soft-white hover:bg-electric-cyan/20 hover:text-electric-cyan transition-all duration-300"
                     >
-                      <Linkedin className="w-5 h-5" />
+                      <Linkedin className="w-6 h-6" />
                     </a>
                     <a
                       href="mailto:alex@lifegiver.com"
-                      className="p-3 rounded-full bg-space-navy/50 text-soft-white hover:bg-neon-pink/20 hover:text-neon-pink transition-all duration-300"
+                      className="p-4 rounded-full bg-space-navy/50 text-soft-white hover:bg-neon-pink/20 hover:text-neon-pink transition-all duration-300"
                     >
-                      <Mail className="w-5 h-5" />
+                      <Mail className="w-6 h-6" />
                     </a>
                   </div>
                 </div>
@@ -91,18 +91,18 @@ const MeetTheCreator = () => {
         </div>
 
         {/* Stats about the creator */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto mt-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto mt-20">
           <div className="text-center">
-            <div className="text-3xl font-bold text-neon-pink mb-2">5+</div>
-            <div className="text-dark-text/70">Years of Experience</div>
+            <div className="text-4xl font-bold text-neon-pink mb-2">5+</div>
+            <div className="text-dark-text/70 text-lg">Years of Experience</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-electric-cyan mb-2">50+</div>
-            <div className="text-dark-text/70">Projects Completed</div>
+            <div className="text-4xl font-bold text-electric-cyan mb-2">50+</div>
+            <div className="text-dark-text/70 text-lg">Projects Completed</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-neon-pink mb-2">O+</div>
-            <div className="text-dark-text/70">Blood Type (Universal Donor)</div>
+            <div className="text-4xl font-bold text-neon-pink mb-2">O+</div>
+            <div className="text-dark-text/70 text-lg">Blood Type (Universal Donor)</div>
           </div>
         </div>
       </div>
