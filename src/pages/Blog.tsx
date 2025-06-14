@@ -1,90 +1,70 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, Calendar, User, Tag, ArrowRight, Heart, Droplets, Award } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Search, Calendar, User, ArrowRight, Clock } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
 const Blog = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState('');
 
-  const categories = ['All', 'Health Tips', 'Success Stories', 'Events', 'News', 'Guidelines'];
+  const categories = ['All', 'Medical Science', 'Community Stories', 'Health Tips', 'Donation Process'];
 
+  // Mock blog data - this would come from a database
   const blogPosts = [
     {
       id: 1,
-      title: 'The Life-Saving Journey: How Blood Donation Changed Sarah\'s Life',
-      excerpt: 'Read about Sarah\'s incredible journey as a blood donor and how she saved multiple lives through her regular donations.',
-      author: 'Dr. Michael Chen',
+      title: 'The Science Behind Blood Types: What Every Donor Should Know',
+      excerpt: 'Discover the fascinating science behind blood types and why understanding them is crucial for safe blood donation and transfusion.',
+      author: 'Dr. Sarah Mitchell',
       date: '2024-01-15',
-      category: 'Success Stories',
-      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      readTime: '5 min read',
-      tags: ['inspiration', 'donor-story', 'life-saving']
+      readTime: '8 min read',
+      category: 'Medical Science',
+      image: 'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      tags: ['Blood Types', 'Medical Science', 'Donation Process']
     },
     {
       id: 2,
-      title: 'Pre-Donation Health Guidelines: What Every Donor Should Know',
-      excerpt: 'Essential health tips and guidelines to ensure you\'re prepared for blood donation and maintain optimal health.',
-      author: 'Dr. Emily Johnson',
-      date: '2024-01-12',
-      category: 'Health Tips',
-      image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      readTime: '7 min read',
-      tags: ['health', 'guidelines', 'preparation']
+      title: 'Community Heroes: Stories of Life-Saving Blood Donations',
+      excerpt: 'Read inspiring stories from our donor community and discover how everyday heroes are making a life-saving difference.',
+      author: 'Community Team',
+      date: '2024-01-10',
+      readTime: '6 min read',
+      category: 'Community Stories',
+      image: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      tags: ['Community', 'Donor Stories', 'Heroes']
     },
     {
       id: 3,
-      title: 'Community Blood Drive Success: 500 Units Collected',
-      excerpt: 'Our recent community blood drive was a tremendous success, collecting 500 units of blood to help patients in need.',
-      author: 'Blood Center Team',
-      date: '2024-01-10',
-      category: 'Events',
-      image: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      readTime: '3 min read',
-      tags: ['community', 'event', 'success']
+      title: 'The Importance of Regular Blood Donation: A Guide for New Donors',
+      excerpt: 'Learn why regular blood donation is vital for maintaining a stable blood supply and how you can become a life-saving hero.',
+      author: 'Donation Advocate',
+      date: '2023-12-20',
+      readTime: '7 min read',
+      category: 'Donation Process',
+      image: 'https://images.unsplash.com/photo-1526256260728-5913961cae9d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      tags: ['Regular Donation', 'New Donors', 'Blood Supply']
     },
     {
       id: 4,
-      title: 'Understanding Blood Types: A Comprehensive Guide',
-      excerpt: 'Learn about different blood types, compatibility, and why your specific blood type matters in donation.',
-      author: 'Dr. Robert Williams',
-      date: '2024-01-08',
-      category: 'Guidelines',
-      image: 'https://images.unsplash.com/photo-1615461066841-6116e61058f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      readTime: '10 min read',
-      tags: ['education', 'blood-types', 'science']
+      title: '5 Simple Health Tips to Prepare for Your Next Blood Donation',
+      excerpt: 'Maximize the impact of your donation by following these easy health tips to ensure you are in top shape.',
+      author: 'Health Expert',
+      date: '2023-12-15',
+      readTime: '5 min read',
+      category: 'Health Tips',
+      image: 'https://images.unsplash.com/photo-1532938314630-e9439f347c43?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      tags: ['Health Tips', 'Blood Donation', 'Donor Preparation']
     },
-    {
-      id: 5,
-      title: 'New Blood Donation Center Opens Downtown',
-      excerpt: 'We\'re excited to announce the opening of our new state-of-the-art blood donation center in the downtown area.',
-      author: 'Admin Team',
-      date: '2024-01-05',
-      category: 'News',
-      image: 'https://images.unsplash.com/photo-1551076805-e1869033e561?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      readTime: '4 min read',
-      tags: ['news', 'facility', 'announcement']
-    },
-    {
-      id: 6,
-      title: 'Hero Donor Spotlight: James\' 100th Donation',
-      excerpt: 'Celebrating James Miller as he reaches his 100th blood donation milestone, saving hundreds of lives.',
-      author: 'Recognition Team',
-      date: '2024-01-03',
-      category: 'Success Stories',
-      image: 'https://images.unsplash.com/photo-1594824694694-40ae4b96000b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      readTime: '6 min read',
-      tags: ['milestone', 'hero', 'recognition']
-    }
   ];
 
   const filteredPosts = blogPosts.filter(post => {
     const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          post.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'All' || post.category === selectedCategory;
+    const matchesCategory = selectedCategory === 'All' || selectedCategory === '' || post.category === selectedCategory;
     
     return matchesSearch && matchesCategory;
   });
@@ -93,11 +73,11 @@ const Blog = () => {
     <div className="min-h-screen bg-background">
       <div className="absolute inset-0 z-0">
         <img
-          src="https://images.unsplash.com/photo-1615461066841-6116e61058f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
-          alt="Background"
-          className="w-full h-full object-cover opacity-10"
+          src="https://images.unsplash.com/photo-1494390248044-34439f76bcca?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+          alt="Blog background"
+          className="w-full h-full object-cover opacity-30"
         />
-        <div className="absolute inset-0 bg-background/90" />
+        <div className="absolute inset-0 bg-background/80" />
       </div>
 
       <Navbar />
@@ -106,189 +86,127 @@ const Blog = () => {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12 animate-fade-in">
-            <h1 className="text-5xl md:text-6xl font-bold text-soft-white mb-6">
-              Blood Donation Blog
+            <h1 className="text-4xl md:text-5xl font-bold text-soft-white mb-4">
+              Explore Our Blog
             </h1>
-            <p className="text-xl text-dark-text/80 max-w-2xl mx-auto">
-              Stories, tips, and insights from our community of life-saving heroes
+            <p className="text-xl text-dark-text/70">
+              Stay updated with the latest news, stories, and insights from our community.
             </p>
           </div>
 
-          {/* Search and Filters */}
+          {/* Filters */}
           <div className="glass-card p-6 rounded-2xl mb-8 animate-slide-up">
-            <div className="flex flex-col md:flex-row gap-4 items-center">
-              <div className="relative flex-1">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neon-pink" />
                 <Input
-                  placeholder="Search blog posts..."
+                  placeholder="Search articles..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 glass border-electric-cyan/20 focus:border-electric-cyan text-white"
                 />
               </div>
               
-              <div className="flex flex-wrap gap-2">
-                {categories.map((category) => (
-                  <Button
-                    key={category}
-                    variant={selectedCategory === category ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedCategory(category)}
-                    className={selectedCategory === category 
-                      ? "bg-gradient-to-r from-neon-pink to-electric-cyan text-white" 
-                      : "border-electric-cyan/30 text-electric-cyan hover:bg-electric-cyan/10"
-                    }
-                  >
-                    {category}
-                  </Button>
-                ))}
-              </div>
+              <Select onValueChange={setSelectedCategory}>
+                <SelectTrigger className="glass border-electric-cyan/20 text-white">
+                  <SelectValue placeholder="Select Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Button className="bg-gradient-to-r from-neon-pink to-electric-cyan text-white">
+                <Search className="w-4 h-4 mr-2" />
+                Apply Filters
+              </Button>
             </div>
           </div>
 
-          {/* Featured Post */}
-          {filteredPosts.length > 0 && (
-            <div className="glass-card rounded-2xl overflow-hidden mb-12 animate-fade-in">
-              <div className="grid grid-cols-1 lg:grid-cols-2">
-                <div className="relative h-64 lg:h-auto">
-                  <img
-                    src={filteredPosts[0].image}
-                    alt={filteredPosts[0].title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <Badge className="bg-neon-pink text-white">
-                      Featured
-                    </Badge>
-                  </div>
-                </div>
-                <div className="p-8">
-                  <div className="flex items-center space-x-4 mb-4">
-                    <Badge variant="outline" className="border-electric-cyan text-electric-cyan">
-                      {filteredPosts[0].category}
-                    </Badge>
-                    <span className="text-dark-text/60 text-sm">{filteredPosts[0].readTime}</span>
-                  </div>
-                  
-                  <h2 className="text-3xl font-bold text-soft-white mb-4">
-                    {filteredPosts[0].title}
-                  </h2>
-                  
-                  <p className="text-dark-text/80 mb-6">
-                    {filteredPosts[0].excerpt}
-                  </p>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-r from-neon-pink to-electric-cyan rounded-full flex items-center justify-center">
-                        <User className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-soft-white font-medium">{filteredPosts[0].author}</p>
-                        <p className="text-dark-text/60 text-sm">{filteredPosts[0].date}</p>
-                      </div>
-                    </div>
-                    
-                    <Button className="bg-gradient-to-r from-neon-pink to-electric-cyan text-white">
-                      Read More
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Blog Posts Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredPosts.slice(1).map((post, index) => (
+            {filteredPosts.map((post, index) => (
               <div
                 key={post.id}
                 className="glass-card rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300 animate-fade-in"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="relative h-48">
+                <div className="relative h-48 overflow-hidden">
                   <img
                     src={post.image}
                     alt={post.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
                   />
                   <div className="absolute top-4 left-4">
-                    <Badge 
-                      variant="outline" 
-                      className="border-electric-cyan text-electric-cyan bg-background/80 backdrop-blur-sm"
-                    >
+                    <Badge className="bg-neon-pink/90 text-white">
                       {post.category}
                     </Badge>
                   </div>
                 </div>
-                
+
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-soft-white mb-3 line-clamp-2">
                     {post.title}
                   </h3>
-                  
-                  <p className="text-dark-text/80 mb-4 line-clamp-3">
+                  <p className="text-dark-text/70 mb-4 line-clamp-3">
                     {post.excerpt}
                   </p>
-                  
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {post.tags.map((tag) => (
-                      <Badge
-                        key={tag}
-                        variant="secondary"
-                        className="bg-electric-cyan/20 text-electric-cyan text-xs"
-                      >
-                        <Tag className="w-3 h-3 mr-1" />
-                        {tag}
-                      </Badge>
-                    ))}
+
+                  <div className="flex items-center text-sm text-dark-text/60 mb-4">
+                    <User className="w-4 h-4 mr-1" />
+                    <span className="mr-4">{post.author}</span>
+                    <Calendar className="w-4 h-4 mr-1" />
+                    <span className="mr-4">{new Date(post.date).toLocaleDateString()}</span>
+                    <Clock className="w-4 h-4 mr-1" />
+                    <span>{post.readTime}</span>
                   </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <Calendar className="w-4 h-4 text-neon-pink" />
-                      <span className="text-dark-text/60 text-sm">{post.date}</span>
-                    </div>
-                    <span className="text-dark-text/60 text-sm">{post.readTime}</span>
-                  </div>
-                  
-                  <div className="mt-4 pt-4 border-t border-electric-cyan/20">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-gradient-to-r from-neon-pink to-electric-cyan rounded-full flex items-center justify-center">
-                          <User className="w-4 h-4 text-white" />
-                        </div>
-                        <span className="text-soft-white text-sm font-medium">{post.author}</span>
-                      </div>
-                      
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        className="text-electric-cyan hover:bg-electric-cyan/10"
-                      >
+
+                  <div className="flex justify-between items-center">
+                    <Link to={`/blog/${post.id}`}>
+                      <Button className="bg-gradient-to-r from-neon-pink to-electric-cyan text-white hover:scale-105 transition-all duration-300">
                         Read More
-                        <ArrowRight className="w-4 h-4 ml-1" />
+                        <ArrowRight className="w-4 h-4 ml-2" />
                       </Button>
-                    </div>
+                    </Link>
                   </div>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Empty State */}
+          {/* Empty State - "No articles found" */}
           {filteredPosts.length === 0 && (
-            <div className="text-center py-12 animate-fade-in">
-              <div className="w-16 h-16 bg-neon-pink/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Search className="w-8 h-8 text-neon-pink" />
+            <div className="text-center py-20 animate-fade-in">
+              <div className="max-w-md mx-auto">
+                <div className="w-24 h-24 bg-neon-pink/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Calendar className="w-12 h-12 text-neon-pink" />
+                </div>
+                <h3 className="text-3xl font-bold text-soft-white mb-4">
+                  No Articles Found
+                </h3>
+                <p className="text-dark-text/60 text-lg mb-8 leading-relaxed">
+                  We couldn't find any articles matching your criteria. 
+                  Try adjusting your search or filter settings to discover more content.
+                </p>
+                <div className="space-y-4">
+                  <Button 
+                    onClick={() => {
+                      setSearchTerm('');
+                      setSelectedCategory('All');
+                    }}
+                    className="bg-gradient-to-r from-neon-pink to-electric-cyan text-white px-8 py-3 rounded-full hover:scale-105 transition-all duration-300"
+                  >
+                    Clear All Filters
+                  </Button>
+                  <p className="text-sm text-dark-text/50">
+                    Or explore our other categories for more great content!
+                  </p>
+                </div>
               </div>
-              <h3 className="text-xl font-semibold text-soft-white mb-2">
-                No posts found
-              </h3>
-              <p className="text-dark-text/60">
-                Try adjusting your search or filter criteria.
-              </p>
             </div>
           )}
         </div>
