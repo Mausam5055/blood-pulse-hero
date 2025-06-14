@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Shield, Eye, Lock, Users, Mail, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Shield, Lock, Eye, FileText, AlertTriangle, CheckCircle, Users, Database } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
 const PrivacyPolicy = () => {
@@ -11,7 +11,7 @@ const PrivacyPolicy = () => {
       {/* Full-screen background image */}
       <div className="absolute inset-0 z-0">
         <img
-          src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+          src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
           alt="Privacy background"
           className="w-full h-full object-cover"
         />
@@ -26,7 +26,7 @@ const PrivacyPolicy = () => {
           {/* Back Button */}
           <div className="mb-8 animate-fade-in">
             <Link to="/">
-              <Button variant="outline" className="border-red-500/20 text-red-500 hover:bg-red-500/10">
+              <Button variant="outline" className="border-blue-500/20 text-blue-500 hover:border-blue-500/20 hover:text-blue-500 hover:bg-transparent">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Home
               </Button>
@@ -34,18 +34,18 @@ const PrivacyPolicy = () => {
           </div>
 
           {/* Header - Full Width */}
-          <div className="glass-card p-6 sm:p-8 lg:p-12 rounded-2xl mb-8 animate-slide-up bg-gray-900/60 border-red-500/20 backdrop-blur-md">
+          <div className="glass-card p-6 sm:p-8 lg:p-12 rounded-2xl mb-8 animate-slide-up bg-gray-900/60 border-blue-500/20 backdrop-blur-md">
             <div className="flex items-center mb-6">
-              <Shield className="w-10 h-10 lg:w-12 lg:h-12 text-red-500 mr-4" />
+              <Shield className="w-10 h-10 lg:w-12 lg:h-12 text-blue-500 mr-4" />
               <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-white">
                 Privacy Policy
               </h1>
             </div>
             <p className="text-lg sm:text-xl lg:text-2xl text-gray-200 leading-relaxed">
-              Your privacy is important to us. This policy explains how we collect, use, and protect your personal information when you use our blood donation services.
+              We are committed to protecting your privacy and ensuring the security of your personal information. This policy explains how we collect, use, and safeguard your data.
             </p>
             <div className="mt-6 flex items-center text-sm lg:text-base text-gray-300">
-              <AlertCircle className="w-4 h-4 lg:w-5 lg:h-5 mr-2" />
+              <AlertTriangle className="w-4 h-4 lg:w-5 lg:h-5 mr-2" />
               <span>Last updated: January 15, 2024</span>
             </div>
           </div>

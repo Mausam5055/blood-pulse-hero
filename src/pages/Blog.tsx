@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,9 +11,9 @@ const Blog = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
 
-  const categories = ['Medical Science', 'Community Stories', 'Health Tips', 'Donation Process', 'Indian Healthcare', 'Regional Updates'];
+  const categories = ['Medical Science', 'Community Stories', 'Health Tips', 'Donation Process', 'Indian Healthcare', 'Regional Updates', 'Emergency Response', 'Blood Types', 'Nutrition'];
 
-  // Mock blog data - this would come from a database
+  // Expanded blog data with more Indian healthcare content
   const blogPosts = [
     {
       id: 1,
@@ -127,6 +126,61 @@ const Blog = () => {
       category: 'Medical Science',
       image: 'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       tags: ['Thalassemia', 'Northeast India', 'Transfusion', 'Medical']
+    },
+    {
+      id: 11,
+      title: 'Emergency Blood Response During Natural Disasters in India',
+      excerpt: 'How blood banks across India coordinate emergency responses during floods, earthquakes, and other natural disasters.',
+      author: 'Emergency Response Team',
+      date: '2023-12-20',
+      readTime: '9 min read',
+      category: 'Emergency Response',
+      image: 'https://images.unsplash.com/photo-1587462723516-4d47a95c7772?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      tags: ['Emergency', 'Disaster Response', 'Blood Banks', 'India']
+    },
+    {
+      id: 12,
+      title: 'Nutrition Guide for Blood Donors: What to Eat Before and After',
+      excerpt: 'Complete nutritional guide for blood donors to maintain optimal health and ensure successful donations.',
+      author: 'Nutritionist Dr. Kavya Reddy',
+      date: '2023-12-18',
+      readTime: '8 min read',
+      category: 'Nutrition',
+      image: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      tags: ['Nutrition', 'Diet', 'Health', 'Blood Donation']
+    },
+    {
+      id: 13,
+      title: 'Rare Blood Types in Indian Population: Challenges and Solutions',
+      excerpt: 'Understanding the distribution of rare blood types in India and strategies for managing shortages.',
+      author: 'Dr. Amit Singh',
+      date: '2023-12-15',
+      readTime: '10 min read',
+      category: 'Blood Types',
+      image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      tags: ['Rare Blood Types', 'Genetics', 'Indian Population', 'Blood Banking']
+    },
+    {
+      id: 14,
+      title: 'Mobile Blood Collection Units: Reaching Remote Villages',
+      excerpt: 'How mobile blood collection units are revolutionizing healthcare access in rural and remote areas of Northeast India.',
+      author: 'Mobile Unit Coordinator',
+      date: '2023-12-12',
+      readTime: '7 min read',
+      category: 'Regional Updates',
+      image: 'https://images.unsplash.com/photo-1576671481015-b4c8b5d5d6d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      tags: ['Mobile Units', 'Rural Healthcare', 'Northeast India', 'Access']
+    },
+    {
+      id: 15,
+      title: 'Student Blood Donation Drives: Engaging Youth in Guwahati',
+      excerpt: 'How educational institutions in Guwahati are fostering a culture of blood donation among students.',
+      author: 'Student Affairs Team',
+      date: '2023-12-10',
+      readTime: '6 min read',
+      category: 'Community Stories',
+      image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      tags: ['Students', 'Youth', 'Guwahati', 'Education']
     }
   ];
 

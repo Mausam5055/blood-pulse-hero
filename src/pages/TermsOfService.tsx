@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, FileText, Scale, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, FileText, Scale, AlertTriangle, CheckCircle, XCircle, Shield, Users } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
 const TermsOfService = () => {
@@ -26,7 +25,7 @@ const TermsOfService = () => {
           {/* Back Button */}
           <div className="mb-8 animate-fade-in">
             <Link to="/">
-              <Button variant="outline" className="border-red-500/20 text-red-500 hover:bg-red-500/10">
+              <Button variant="outline" className="border-red-500/20 text-red-500 hover:border-red-500/20 hover:text-red-500 hover:bg-transparent">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Home
               </Button>
@@ -104,6 +103,44 @@ const TermsOfService = () => {
                   <li>Maintain appropriate behavior at all times</li>
                   <li>Report any concerns or incidents immediately</li>
                 </ul>
+              </div>
+
+              {/* New Section with Image */}
+              <div className="glass-card p-6 sm:p-8 lg:p-10 rounded-2xl animate-slide-up bg-gray-900/60 border-red-500/20 backdrop-blur-md">
+                <div className="flex items-center mb-4">
+                  <Shield className="w-6 h-6 lg:w-8 lg:h-8 text-red-500 mr-3" />
+                  <h2 className="text-2xl lg:text-3xl font-bold text-white">Donor Safety and Protection</h2>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                  <div>
+                    <img
+                      src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                      alt="Medical safety equipment"
+                      className="w-full h-64 object-cover rounded-xl"
+                    />
+                  </div>
+                  <div>
+                    <p className="text-gray-200 mb-4 text-base lg:text-lg">
+                      Your safety is our top priority. We maintain the highest standards of medical care and follow strict protocols to ensure every donation is safe and comfortable.
+                    </p>
+                    <ul className="enhanced-list text-gray-200 text-base lg:text-lg">
+                      <li>Sterile, single-use equipment for every donation</li>
+                      <li>Trained medical professionals oversee all procedures</li>
+                      <li>Comprehensive pre-donation health screening</li>
+                      <li>Post-donation monitoring and care</li>
+                      <li>Emergency medical support available on-site</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="important-box bg-green-500/20 border border-green-500/30 p-6 lg:p-8 rounded-xl mt-6">
+                  <div className="flex items-center mb-2">
+                    <Users className="w-5 h-5 text-green-400 mr-2" />
+                    <h4 className="text-lg lg:text-xl font-semibold text-green-400">Community Impact</h4>
+                  </div>
+                  <p className="text-gray-200 text-base lg:text-lg">Every donation can save up to 3 lives. By donating blood, you become part of a life-saving community that helps ensure adequate blood supply for emergencies, surgeries, and chronic conditions.</p>
+                </div>
               </div>
             </div>
 
