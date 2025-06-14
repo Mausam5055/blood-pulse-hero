@@ -7,14 +7,16 @@ import Navbar from '../components/Navbar';
 
 const TermsOfService = () => {
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black relative">
+      {/* Full-screen background image */}
       <div className="absolute inset-0 z-0">
         <img
           src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
           alt="Terms background"
-          className="w-full h-full object-cover opacity-10"
+          className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black/95" />
+        {/* Dark overlay for better text visibility */}
+        <div className="absolute inset-0 bg-black/85" />
       </div>
 
       <Navbar />
@@ -32,18 +34,18 @@ const TermsOfService = () => {
           </div>
 
           {/* Header - Full Width */}
-          <div className="glass-card p-6 sm:p-8 rounded-2xl mb-8 animate-slide-up bg-gray-900/50 border-red-500/20">
+          <div className="glass-card p-6 sm:p-8 lg:p-12 rounded-2xl mb-8 animate-slide-up bg-gray-900/60 border-red-500/20 backdrop-blur-md">
             <div className="flex items-center mb-6">
-              <FileText className="w-8 h-8 text-red-500 mr-4" />
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">
+              <FileText className="w-10 h-10 lg:w-12 lg:h-12 text-red-500 mr-4" />
+              <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-white">
                 Terms of Service
               </h1>
             </div>
-            <p className="text-lg sm:text-xl text-gray-300 leading-relaxed">
+            <p className="text-lg sm:text-xl lg:text-2xl text-gray-200 leading-relaxed">
               These terms govern your use of our blood donation services. By using our services, you agree to these terms and conditions.
             </p>
-            <div className="mt-6 flex items-center text-sm text-gray-400">
-              <AlertTriangle className="w-4 h-4 mr-2" />
+            <div className="mt-6 flex items-center text-sm lg:text-base text-gray-300">
+              <AlertTriangle className="w-4 h-4 lg:w-5 lg:h-5 mr-2" />
               <span>Last updated: January 15, 2024</span>
             </div>
           </div>
@@ -52,24 +54,24 @@ const TermsOfService = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left Column */}
             <div className="space-y-8">
-              <div className="glass-card p-6 sm:p-8 rounded-2xl animate-slide-up bg-gray-900/50 border-red-500/20">
+              <div className="glass-card p-6 sm:p-8 lg:p-10 rounded-2xl animate-slide-up bg-gray-900/60 border-red-500/20 backdrop-blur-md">
                 <div className="flex items-center mb-4">
-                  <Scale className="w-6 h-6 text-red-500 mr-3" />
-                  <h2 className="text-2xl font-bold text-white">Acceptance of Terms</h2>
+                  <Scale className="w-6 h-6 lg:w-8 lg:h-8 text-red-500 mr-3" />
+                  <h2 className="text-2xl lg:text-3xl font-bold text-white">Acceptance of Terms</h2>
                 </div>
-                <p className="text-gray-300 mb-6">By accessing or using Lifeline Blood Services ("we," "us," or "our"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.</p>
+                <p className="text-gray-200 mb-6 text-base lg:text-lg">By accessing or using Lifeline Blood Services ("we," "us," or "our"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.</p>
                 
-                <div className="important-box bg-red-500/10 border border-red-500/20 p-6 rounded-xl">
-                  <h4 className="text-lg font-semibold text-red-400 mb-2">Legal Agreement</h4>
-                  <p className="text-gray-300">These terms constitute a legally binding agreement between you and Lifeline Blood Services.</p>
+                <div className="important-box bg-red-500/20 border border-red-500/30 p-6 lg:p-8 rounded-xl">
+                  <h4 className="text-lg lg:text-xl font-semibold text-red-400 mb-2">Legal Agreement</h4>
+                  <p className="text-gray-200 text-base lg:text-lg">These terms constitute a legally binding agreement between you and Lifeline Blood Services.</p>
                 </div>
               </div>
 
-              <div className="glass-card p-6 sm:p-8 rounded-2xl animate-slide-up bg-gray-900/50 border-red-500/20">
-                <h2 className="text-2xl font-bold text-white mb-4 border-b border-red-500/20 pb-2">Eligibility Requirements</h2>
+              <div className="glass-card p-6 sm:p-8 lg:p-10 rounded-2xl animate-slide-up bg-gray-900/60 border-red-500/20 backdrop-blur-md">
+                <h2 className="text-2xl lg:text-3xl font-bold text-white mb-4 border-b border-red-500/20 pb-2">Eligibility Requirements</h2>
                 
-                <p className="text-gray-300 mb-4">To donate blood through our services, you must:</p>
-                <ul className="enhanced-list text-gray-300">
+                <p className="text-gray-200 mb-4 text-base lg:text-lg">To donate blood through our services, you must:</p>
+                <ul className="enhanced-list text-gray-200 text-base lg:text-lg">
                   <li>Be at least 16 years old (17 in some states)</li>
                   <li>Weigh at least 110 pounds</li>
                   <li>Be in generally good health</li>
@@ -78,25 +80,25 @@ const TermsOfService = () => {
                   <li>Complete our health screening questionnaire truthfully</li>
                 </ul>
 
-                <div className="important-box bg-blue-500/10 border border-blue-500/20 p-6 rounded-xl mt-6">
-                  <h4 className="text-lg font-semibold text-blue-400 mb-2">Age Requirements</h4>
-                  <p className="text-gray-300">Minors must have parental consent and meet additional requirements as specified by state law.</p>
+                <div className="important-box bg-blue-500/20 border border-blue-500/30 p-6 lg:p-8 rounded-xl mt-6">
+                  <h4 className="text-lg lg:text-xl font-semibold text-blue-400 mb-2">Age Requirements</h4>
+                  <p className="text-gray-200 text-base lg:text-lg">Minors must have parental consent and meet additional requirements as specified by state law.</p>
                 </div>
               </div>
 
-              <div className="glass-card p-6 sm:p-8 rounded-2xl animate-slide-up bg-gray-900/50 border-red-500/20">
-                <h2 className="text-2xl font-bold text-white mb-4 border-b border-red-500/20 pb-2">User Responsibilities</h2>
+              <div className="glass-card p-6 sm:p-8 lg:p-10 rounded-2xl animate-slide-up bg-gray-900/60 border-red-500/20 backdrop-blur-md">
+                <h2 className="text-2xl lg:text-3xl font-bold text-white mb-4 border-b border-red-500/20 pb-2">User Responsibilities</h2>
                 
-                <h3 className="text-xl font-semibold text-red-400 mt-6 mb-3">Truthful Information</h3>
-                <ul className="enhanced-list text-gray-300">
+                <h3 className="text-xl lg:text-2xl font-semibold text-red-400 mt-6 mb-3">Truthful Information</h3>
+                <ul className="enhanced-list text-gray-200 text-base lg:text-lg">
                   <li>Provide accurate personal and medical information</li>
                   <li>Update information when circumstances change</li>
                   <li>Report any adverse reactions promptly</li>
                   <li>Follow all pre and post-donation instructions</li>
                 </ul>
 
-                <h3 className="text-xl font-semibold text-red-400 mt-6 mb-3">Compliance</h3>
-                <ul className="enhanced-list text-gray-300">
+                <h3 className="text-xl lg:text-2xl font-semibold text-red-400 mt-6 mb-3">Compliance</h3>
+                <ul className="enhanced-list text-gray-200 text-base lg:text-lg">
                   <li>Follow all facility rules and regulations</li>
                   <li>Respect staff and other donors</li>
                   <li>Maintain appropriate behavior at all times</li>
@@ -107,14 +109,14 @@ const TermsOfService = () => {
 
             {/* Right Column */}
             <div className="space-y-8">
-              <div className="glass-card p-6 sm:p-8 rounded-2xl animate-slide-up bg-gray-900/50 border-red-500/20">
-                <h2 className="text-2xl font-bold text-white mb-4 border-b border-red-500/20 pb-2">Health and Safety Requirements</h2>
+              <div className="glass-card p-6 sm:p-8 lg:p-10 rounded-2xl animate-slide-up bg-gray-900/60 border-red-500/20 backdrop-blur-md">
+                <h2 className="text-2xl lg:text-3xl font-bold text-white mb-4 border-b border-red-500/20 pb-2">Health and Safety Requirements</h2>
                 
                 <div className="grid grid-cols-1 gap-6 mt-6">
-                  <div className="safety-item bg-green-500/10 border border-green-500/20 p-6 rounded-xl">
-                    <CheckCircle className="w-5 h-5 text-green-400 mb-2" />
-                    <h4 className="text-lg font-semibold text-green-400 mb-3">You May Donate If:</h4>
-                    <ul className="text-gray-300 text-sm space-y-1">
+                  <div className="safety-item bg-green-500/20 border border-green-500/30 p-6 lg:p-8 rounded-xl">
+                    <CheckCircle className="w-6 h-6 lg:w-7 lg:h-7 text-green-400 mb-2" />
+                    <h4 className="text-lg lg:text-xl font-semibold text-green-400 mb-3">You May Donate If:</h4>
+                    <ul className="text-gray-200 text-sm lg:text-base space-y-1">
                       <li>• You feel well and healthy</li>
                       <li>• Your last donation was over 56 days ago</li>
                       <li>• You meet weight and age requirements</li>
@@ -122,10 +124,10 @@ const TermsOfService = () => {
                       <li>• You have no recent illness or fever</li>
                     </ul>
                   </div>
-                  <div className="safety-item bg-red-500/10 border border-red-500/20 p-6 rounded-xl">
-                    <XCircle className="w-5 h-5 text-red-400 mb-2" />
-                    <h4 className="text-lg font-semibold text-red-400 mb-3">You Cannot Donate If:</h4>
-                    <ul className="text-gray-300 text-sm space-y-1">
+                  <div className="safety-item bg-red-500/20 border border-red-500/30 p-6 lg:p-8 rounded-xl">
+                    <XCircle className="w-6 h-6 lg:w-7 lg:h-7 text-red-400 mb-2" />
+                    <h4 className="text-lg lg:text-xl font-semibold text-red-400 mb-3">You Cannot Donate If:</h4>
+                    <ul className="text-gray-200 text-sm lg:text-base space-y-1">
                       <li>• You have cold or flu symptoms</li>
                       <li>• You've taken antibiotics in the last 24 hours</li>
                       <li>• You've had recent tattoos or piercings</li>
@@ -136,12 +138,12 @@ const TermsOfService = () => {
                 </div>
               </div>
 
-              <div className="glass-card p-6 sm:p-8 rounded-2xl animate-slide-up bg-gray-900/50 border-red-500/20">
-                <h2 className="text-2xl font-bold text-white mb-4 border-b border-red-500/20 pb-2">Privacy and Data</h2>
+              <div className="glass-card p-6 sm:p-8 lg:p-10 rounded-2xl animate-slide-up bg-gray-900/60 border-red-500/20 backdrop-blur-md">
+                <h2 className="text-2xl lg:text-3xl font-bold text-white mb-4 border-b border-red-500/20 pb-2">Privacy and Data</h2>
                 
-                <p className="text-gray-300 mb-4">We are committed to protecting your privacy and personal information:</p>
+                <p className="text-gray-200 mb-4 text-base lg:text-lg">We are committed to protecting your privacy and personal information:</p>
                 
-                <ul className="enhanced-list text-gray-300">
+                <ul className="enhanced-list text-gray-200 text-base lg:text-lg">
                   <li>Your personal information is kept confidential</li>
                   <li>Medical records are stored securely</li>
                   <li>Information is shared only as required by law</li>
@@ -149,41 +151,41 @@ const TermsOfService = () => {
                   <li>We comply with all applicable privacy regulations</li>
                 </ul>
 
-                <div className="important-box bg-purple-500/10 border border-purple-500/20 p-6 rounded-xl mt-6">
-                  <h4 className="text-lg font-semibold text-purple-400 mb-2">HIPAA Compliance</h4>
-                  <p className="text-gray-300">We are fully compliant with HIPAA regulations and protect your health information accordingly.</p>
+                <div className="important-box bg-purple-500/20 border border-purple-500/30 p-6 lg:p-8 rounded-xl mt-6">
+                  <h4 className="text-lg lg:text-xl font-semibold text-purple-400 mb-2">HIPAA Compliance</h4>
+                  <p className="text-gray-200 text-base lg:text-lg">We are fully compliant with HIPAA regulations and protect your health information accordingly.</p>
                 </div>
               </div>
 
-              <div className="glass-card p-6 sm:p-8 rounded-2xl animate-slide-up bg-gray-900/50 border-red-500/20">
-                <h2 className="text-2xl font-bold text-white mb-4 border-b border-red-500/20 pb-2">Contact Information</h2>
+              <div className="glass-card p-6 sm:p-8 lg:p-10 rounded-2xl animate-slide-up bg-gray-900/60 border-red-500/20 backdrop-blur-md">
+                <h2 className="text-2xl lg:text-3xl font-bold text-white mb-4 border-b border-red-500/20 pb-2">Contact Information</h2>
                 
-                <p className="text-gray-300 mb-6">For questions about these terms or our services, please contact us:</p>
+                <p className="text-gray-200 mb-6 text-base lg:text-lg">For questions about these terms or our services, please contact us:</p>
                 
                 <div className="grid grid-cols-1 gap-6">
-                  <div className="contact-item bg-gray-800/50 border border-red-500/20 p-6 rounded-xl">
-                    <h4 className="text-lg font-semibold text-red-400 mb-2">General Information</h4>
-                    <p className="text-gray-300 text-sm">Email: info@lifelineblood.org</p>
-                    <p className="text-gray-300 text-sm">Phone: (555) 123-4567</p>
-                    <p className="text-gray-300 text-sm">Hours: Monday-Friday, 8AM-6PM</p>
+                  <div className="contact-item bg-gray-800/60 border border-red-500/20 p-6 lg:p-8 rounded-xl">
+                    <h4 className="text-lg lg:text-xl font-semibold text-red-400 mb-2">General Information</h4>
+                    <p className="text-gray-200 text-sm lg:text-base">Email: info@lifelineblood.org</p>
+                    <p className="text-gray-200 text-sm lg:text-base">Phone: (555) 123-4567</p>
+                    <p className="text-gray-200 text-sm lg:text-base">Hours: Monday-Friday, 8AM-6PM</p>
                   </div>
-                  <div className="contact-item bg-gray-800/50 border border-red-500/20 p-6 rounded-xl">
-                    <h4 className="text-lg font-semibold text-red-400 mb-2">Legal Department</h4>
-                    <p className="text-gray-300 text-sm">Email: legal@lifelineblood.org</p>
-                    <p className="text-gray-300 text-sm">Phone: (555) 123-4570</p>
-                    <p className="text-gray-300 text-sm">Hours: Monday-Friday, 9AM-5PM</p>
+                  <div className="contact-item bg-gray-800/60 border border-red-500/20 p-6 lg:p-8 rounded-xl">
+                    <h4 className="text-lg lg:text-xl font-semibold text-red-400 mb-2">Legal Department</h4>
+                    <p className="text-gray-200 text-sm lg:text-base">Email: legal@lifelineblood.org</p>
+                    <p className="text-gray-200 text-sm lg:text-base">Phone: (555) 123-4570</p>
+                    <p className="text-gray-200 text-sm lg:text-base">Hours: Monday-Friday, 9AM-5PM</p>
                   </div>
-                  <div className="contact-item bg-gray-800/50 border border-red-500/20 p-6 rounded-xl">
-                    <h4 className="text-lg font-semibold text-red-400 mb-2">Mailing Address</h4>
-                    <p className="text-gray-300 text-sm">Lifeline Blood Services<br/>
+                  <div className="contact-item bg-gray-800/60 border border-red-500/20 p-6 lg:p-8 rounded-xl">
+                    <h4 className="text-lg lg:text-xl font-semibold text-red-400 mb-2">Mailing Address</h4>
+                    <p className="text-gray-200 text-sm lg:text-base">Lifeline Blood Services<br/>
                     123 Health Center Drive<br/>
                     Medical City, MC 12345</p>
                   </div>
                 </div>
 
-                <div className="final-note bg-red-500/10 border border-red-500/20 p-6 rounded-xl mt-8 text-center">
-                  <h4 className="text-lg font-semibold text-red-400 mb-2">Thank You</h4>
-                  <p className="text-gray-300">Thank you for choosing Lifeline Blood Services. Your commitment to blood donation helps save lives in our community every day.</p>
+                <div className="final-note bg-red-500/20 border border-red-500/30 p-6 lg:p-8 rounded-xl mt-8 text-center">
+                  <h4 className="text-lg lg:text-xl font-semibold text-red-400 mb-2">Thank You</h4>
+                  <p className="text-gray-200 text-base lg:text-lg">Thank you for choosing Lifeline Blood Services. Your commitment to blood donation helps save lives in our community every day.</p>
                 </div>
               </div>
             </div>
@@ -193,7 +195,7 @@ const TermsOfService = () => {
 
       <style>{`
         .terms-content {
-          color: #D1D5DB;
+          color: #E5E7EB;
           line-height: 1.7;
         }
         
