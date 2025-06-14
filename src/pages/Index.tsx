@@ -8,7 +8,7 @@ import CallToAction from '../components/CallToAction';
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-background transition-colors duration-500">
       <Hero />
       <DonorStats />
       <HowItWorks />
