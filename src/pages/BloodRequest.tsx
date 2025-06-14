@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,8 +6,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Droplets, User, Phone, Mail, MapPin, Calendar as CalendarIcon, Clock, AlertTriangle } from 'lucide-react';
+import { Droplets, User, Phone, Mail, MapPin, Calendar as CalendarIcon, Clock, AlertTriangle, Download } from 'lucide-react';
 import { format } from 'date-fns';
+import html2pdf from 'html2pdf.js';
 import Navbar from '../components/Navbar';
 
 const BloodRequest = () => {
@@ -28,13 +28,116 @@ const BloodRequest = () => {
     additionalNotes: '',
   });
 
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
   const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
   const urgencyLevels = ['Critical', 'Urgent', 'Normal'];
+
+  const generatePDF = () => {
+    const urgencyColor = formData.urgency === 'Critical' ? '#dc2626' : formData.urgency === 'Urgent' ? '#ea580c' : '#16a34a';
+    
+    const element = document.createElement('div');
+    element.innerHTML = `
+      <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 40px; background: white; color: #333;">
+        <div style="text-align: center; margin-bottom: 40px; border-bottom: 3px solid #e91e63; padding-bottom: 20px;">
+          <h1 style="color: #e91e63; font-size: 28px; margin: 0;">LifeGiver Blood Donation</h1>
+          <h2 style="color: #666; font-size: 18px; margin: 10px 0 0 0;">Emergency Blood Request</h2>
+          <p style="color: #999; margin: 5px 0 0 0;">Request ID: LG${Date.now()}</p>
+          <div style="background: ${urgencyColor}; color: white; padding: 10px 20px; border-radius: 25px; display: inline-block; margin-top: 15px; font-weight: bold;">
+            ${formData.urgency.toUpperCase()} PRIORITY
+          </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+          <div>
+            <h3 style="color: #e91e63; border-bottom: 2px solid #e91e63; padding-bottom: 10px; margin-bottom: 20px;">Patient Information</h3>
+            <div style="margin-bottom: 15px;">
+              <strong>Patient Name:</strong> ${formData.patientName}
+            </div>
+            <div style="margin-bottom: 15px;">
+              <strong>Contact Person:</strong> ${formData.contactPerson}
+            </div>
+            <div style="margin-bottom: 15px;">
+              <strong>Email:</strong> ${formData.email}
+            </div>
+            <div style="margin-bottom: 15px;">
+              <strong>Phone:</strong> ${formData.phone}
+            </div>
+            <div style="margin-bottom: 15px;">
+              <strong>Medical Condition:</strong> ${formData.medicalCondition || 'Not specified'}
+            </div>
+          </div>
+          
+          <div>
+            <h3 style="color: #e91e63; border-bottom: 2px solid #e91e63; padding-bottom: 10px; margin-bottom: 20px;">Blood Requirements</h3>
+            <div style="margin-bottom: 15px;">
+              <strong>Blood Group Needed:</strong> <span style="background: #e91e63; color: white; padding: 5px 10px; border-radius: 5px; font-weight: bold;">${formData.bloodGroup}</span>
+            </div>
+            <div style="margin-bottom: 15px;">
+              <strong>Units Required:</strong> ${formData.unitsNeeded} units
+            </div>
+            <div style="margin-bottom: 15px;">
+              <strong>Required Date:</strong> ${formData.requiredDate ? format(formData.requiredDate, "PPP") : 'ASAP'}
+            </div>
+            <div style="margin-bottom: 15px;">
+              <strong>Urgency:</strong> <span style="color: ${urgencyColor}; font-weight: bold;">${formData.urgency}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #e91e63; border-bottom: 2px solid #e91e63; padding-bottom: 10px; margin-bottom: 20px;">Hospital Information</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+              <div style="margin-bottom: 15px;">
+                <strong>Hospital:</strong> ${formData.hospital}
+              </div>
+              <div style="margin-bottom: 15px;">
+                <strong>Doctor:</strong> ${formData.doctorName}
+              </div>
+            </div>
+            <div>
+              <div style="margin-bottom: 15px;">
+                <strong>Address:</strong> ${formData.address}
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        ${formData.additionalNotes ? `
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+          <h3 style="color: #e91e63; margin-top: 0;">Additional Notes</h3>
+          <p style="margin: 0;">${formData.additionalNotes}</p>
+        </div>
+        ` : ''}
+        
+        <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+          <h3 style="color: #856404; margin-top: 0;">Emergency Contact Information</h3>
+          <p style="margin: 0; color: #856404;">If you can donate ${formData.bloodGroup} blood, please contact ${formData.contactPerson} immediately at ${formData.phone}</p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px; border-top: 1px solid #ddd; padding-top: 20px;">
+          <p style="color: #666; margin: 0;">Thank you for helping save a life!</p>
+          <p style="color: #999; font-size: 14px; margin: 10px 0 0 0;">Generated on ${new Date().toLocaleDateString()} | www.lifegiver.com</p>
+        </div>
+      </div>
+    `;
+
+    const opt = {
+      margin: 1,
+      filename: `LifeGiver_Blood_Request_${formData.patientName.replace(/\s+/g, '_')}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save();
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Blood request data:', formData);
-    // Here we would integrate with Supabase
+    setIsSubmitted(true);
   };
 
   return (
@@ -65,253 +168,269 @@ const BloodRequest = () => {
             </p>
           </div>
 
-          {/* Request Form */}
-          <form onSubmit={handleSubmit} className="glass-card p-8 rounded-2xl animate-slide-up">
-            {/* Patient Information */}
-            <div className="mb-8">
-              <h3 className="text-2xl font-semibold text-soft-white mb-6 flex items-center">
-                <User className="w-6 h-6 mr-3 text-neon-pink" />
-                Patient Information
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="patientName" className="text-soft-white">
-                    Patient Name
-                  </Label>
-                  <Input
-                    id="patientName"
-                    value={formData.patientName}
-                    onChange={(e) => setFormData({...formData, patientName: e.target.value})}
-                    className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="contactPerson" className="text-soft-white">
-                    Contact Person
-                  </Label>
-                  <Input
-                    id="contactPerson"
-                    value={formData.contactPerson}
-                    onChange={(e) => setFormData({...formData, contactPerson: e.target.value})}
-                    className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-soft-white flex items-center">
-                    <Mail className="w-4 h-4 mr-2 text-neon-pink" />
-                    Email
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="phone" className="text-soft-white flex items-center">
-                    <Phone className="w-4 h-4 mr-2 text-neon-pink" />
-                    Phone
-                  </Label>
-                  <Input
-                    id="phone"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
-                    required
-                  />
-                </div>
+          {isSubmitted ? (
+            <div className="glass-card p-8 rounded-2xl text-center animate-fade-in">
+              <div className="w-20 h-20 bg-gradient-to-r from-neon-pink to-electric-cyan rounded-full flex items-center justify-center mx-auto mb-6">
+                <Droplets className="w-10 h-10 text-white" />
               </div>
-            </div>
-
-            {/* Blood Requirements */}
-            <div className="mb-8">
-              <h3 className="text-2xl font-semibold text-soft-white mb-6 flex items-center">
-                <Droplets className="w-6 h-6 mr-3 text-neon-pink" />
-                Blood Requirements
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="space-y-2">
-                  <Label className="text-soft-white">
-                    Blood Group Needed
-                  </Label>
-                  <Select onValueChange={(value) => setFormData({...formData, bloodGroup: value})}>
-                    <SelectTrigger className="glass border-electric-cyan/20 text-white">
-                      <SelectValue placeholder="Select blood group" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {bloodGroups.map((group) => (
-                        <SelectItem key={group} value={group}>
-                          {group}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="unitsNeeded" className="text-soft-white">
-                    Units Needed
-                  </Label>
-                  <Input
-                    id="unitsNeeded"
-                    type="number"
-                    min="1"
-                    value={formData.unitsNeeded}
-                    onChange={(e) => setFormData({...formData, unitsNeeded: e.target.value})}
-                    className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-soft-white flex items-center">
-                    <AlertTriangle className="w-4 h-4 mr-2 text-neon-pink" />
-                    Urgency Level
-                  </Label>
-                  <Select onValueChange={(value) => setFormData({...formData, urgency: value})}>
-                    <SelectTrigger className="glass border-electric-cyan/20 text-white">
-                      <SelectValue placeholder="Select urgency" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {urgencyLevels.map((level) => (
-                        <SelectItem key={level} value={level}>
-                          <span className={level === 'Critical' ? 'text-red-500' : level === 'Urgent' ? 'text-orange-500' : 'text-green-500'}>
-                            {level}
-                          </span>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-
-            {/* Hospital and Location */}
-            <div className="mb-8">
-              <h3 className="text-2xl font-semibold text-soft-white mb-6 flex items-center">
-                <MapPin className="w-6 h-6 mr-3 text-neon-pink" />
-                Hospital Information
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="hospital" className="text-soft-white">
-                    Hospital Name
-                  </Label>
-                  <Input
-                    id="hospital"
-                    value={formData.hospital}
-                    onChange={(e) => setFormData({...formData, hospital: e.target.value})}
-                    className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="doctorName" className="text-soft-white">
-                    Doctor Name
-                  </Label>
-                  <Input
-                    id="doctorName"
-                    value={formData.doctorName}
-                    onChange={(e) => setFormData({...formData, doctorName: e.target.value})}
-                    className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
-                    required
-                  />
-                </div>
-
-                <div className="md:col-span-2 space-y-2">
-                  <Label htmlFor="address" className="text-soft-white">
-                    Hospital Address
-                  </Label>
-                  <Input
-                    id="address"
-                    value={formData.address}
-                    onChange={(e) => setFormData({...formData, address: e.target.value})}
-                    className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-soft-white flex items-center">
-                    <CalendarIcon className="w-4 h-4 mr-2 text-neon-pink" />
-                    Required Date
-                  </Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="glass border-electric-cyan/20 w-full justify-start text-left font-normal text-white"
-                      >
-                        {formData.requiredDate ? (
-                          format(formData.requiredDate, "PPP")
-                        ) : (
-                          <span>When is blood needed?</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                      <Calendar
-                        mode="single"
-                        selected={formData.requiredDate}
-                        onSelect={(date) => setFormData({...formData, requiredDate: date})}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="medicalCondition" className="text-soft-white">
-                    Medical Condition
-                  </Label>
-                  <Input
-                    id="medicalCondition"
-                    value={formData.medicalCondition}
-                    onChange={(e) => setFormData({...formData, medicalCondition: e.target.value})}
-                    className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Additional Notes */}
-            <div className="mb-8">
-              <Label htmlFor="additionalNotes" className="text-soft-white mb-3 block">
-                Additional Notes
-              </Label>
-              <Textarea
-                id="additionalNotes"
-                value={formData.additionalNotes}
-                onChange={(e) => setFormData({...formData, additionalNotes: e.target.value})}
-                className="glass border-electric-cyan/20 focus:border-electric-cyan text-white min-h-[120px]"
-                placeholder="Any additional information that might help donors..."
-              />
-            </div>
-
-            {/* Submit Button */}
-            <div className="flex justify-center">
+              <h2 className="text-3xl font-bold text-soft-white mb-4">Request Submitted!</h2>
+              <p className="text-dark-text/80 mb-8">Your blood request has been submitted. We will notify nearby donors immediately.</p>
               <Button
-                type="submit"
-                size="lg"
-                className="bg-gradient-to-r from-neon-pink to-electric-cyan hover:from-neon-pink/90 hover:to-electric-cyan/90 text-white px-16 py-4 text-lg font-semibold rounded-full transform hover:scale-105 transition-all duration-300 animate-glow"
+                onClick={generatePDF}
+                className="bg-gradient-to-r from-neon-pink to-electric-cyan hover:from-neon-pink/90 hover:to-electric-cyan/90 text-white px-8 py-3 rounded-full"
               >
-                <Clock className="w-6 h-6 mr-3" />
-                Submit Blood Request
+                <Download className="w-5 h-5 mr-2" />
+                Download Request PDF
               </Button>
             </div>
-          </form>
+          ) : (
+            <form onSubmit={handleSubmit} className="glass-card p-8 rounded-2xl animate-slide-up">
+              {/* Patient Information */}
+              <div className="mb-8">
+                <h3 className="text-2xl font-semibold text-soft-white mb-6 flex items-center">
+                  <User className="w-6 h-6 mr-3 text-neon-pink" />
+                  Patient Information
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="patientName" className="text-soft-white">
+                      Patient Name
+                    </Label>
+                    <Input
+                      id="patientName"
+                      value={formData.patientName}
+                      onChange={(e) => setFormData({...formData, patientName: e.target.value})}
+                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="contactPerson" className="text-soft-white">
+                      Contact Person
+                    </Label>
+                    <Input
+                      id="contactPerson"
+                      value={formData.contactPerson}
+                      onChange={(e) => setFormData({...formData, contactPerson: e.target.value})}
+                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-soft-white flex items-center">
+                      <Mail className="w-4 h-4 mr-2 text-neon-pink" />
+                      Email
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="phone" className="text-soft-white flex items-center">
+                      <Phone className="w-4 h-4 mr-2 text-neon-pink" />
+                      Phone
+                    </Label>
+                    <Input
+                      id="phone"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Blood Requirements */}
+              <div className="mb-8">
+                <h3 className="text-2xl font-semibold text-soft-white mb-6 flex items-center">
+                  <Droplets className="w-6 h-6 mr-3 text-neon-pink" />
+                  Blood Requirements
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <Label className="text-soft-white">
+                      Blood Group Needed
+                    </Label>
+                    <Select onValueChange={(value) => setFormData({...formData, bloodGroup: value})}>
+                      <SelectTrigger className="glass border-electric-cyan/20 text-white">
+                        <SelectValue placeholder="Select blood group" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {bloodGroups.map((group) => (
+                          <SelectItem key={group} value={group}>
+                            {group}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="unitsNeeded" className="text-soft-white">
+                      Units Needed
+                    </Label>
+                    <Input
+                      id="unitsNeeded"
+                      type="number"
+                      min="1"
+                      value={formData.unitsNeeded}
+                      onChange={(e) => setFormData({...formData, unitsNeeded: e.target.value})}
+                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-soft-white flex items-center">
+                      <AlertTriangle className="w-4 h-4 mr-2 text-neon-pink" />
+                      Urgency Level
+                    </Label>
+                    <Select onValueChange={(value) => setFormData({...formData, urgency: value})}>
+                      <SelectTrigger className="glass border-electric-cyan/20 text-white">
+                        <SelectValue placeholder="Select urgency" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {urgencyLevels.map((level) => (
+                          <SelectItem key={level} value={level}>
+                            <span className={level === 'Critical' ? 'text-red-500' : level === 'Urgent' ? 'text-orange-500' : 'text-green-500'}>
+                              {level}
+                            </span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Hospital and Location */}
+              <div className="mb-8">
+                <h3 className="text-2xl font-semibold text-soft-white mb-6 flex items-center">
+                  <MapPin className="w-6 h-6 mr-3 text-neon-pink" />
+                  Hospital Information
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="hospital" className="text-soft-white">
+                      Hospital Name
+                    </Label>
+                    <Input
+                      id="hospital"
+                      value={formData.hospital}
+                      onChange={(e) => setFormData({...formData, hospital: e.target.value})}
+                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="doctorName" className="text-soft-white">
+                      Doctor Name
+                    </Label>
+                    <Input
+                      id="doctorName"
+                      value={formData.doctorName}
+                      onChange={(e) => setFormData({...formData, doctorName: e.target.value})}
+                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                      required
+                    />
+                  </div>
+
+                  <div className="md:col-span-2 space-y-2">
+                    <Label htmlFor="address" className="text-soft-white">
+                      Hospital Address
+                    </Label>
+                    <Input
+                      id="address"
+                      value={formData.address}
+                      onChange={(e) => setFormData({...formData, address: e.target.value})}
+                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-soft-white flex items-center">
+                      <CalendarIcon className="w-4 h-4 mr-2 text-neon-pink" />
+                      Required Date
+                    </Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="glass border-electric-cyan/20 w-full justify-start text-left font-normal text-white"
+                        >
+                          {formData.requiredDate ? (
+                            format(formData.requiredDate, "PPP")
+                          ) : (
+                            <span>When is blood needed?</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={formData.requiredDate}
+                          onSelect={(date) => setFormData({...formData, requiredDate: date})}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="medicalCondition" className="text-soft-white">
+                      Medical Condition
+                    </Label>
+                    <Input
+                      id="medicalCondition"
+                      value={formData.medicalCondition}
+                      onChange={(e) => setFormData({...formData, medicalCondition: e.target.value})}
+                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional Notes */}
+              <div className="mb-8">
+                <Label htmlFor="additionalNotes" className="text-soft-white mb-3 block">
+                  Additional Notes
+                </Label>
+                <Textarea
+                  id="additionalNotes"
+                  value={formData.additionalNotes}
+                  onChange={(e) => setFormData({...formData, additionalNotes: e.target.value})}
+                  className="glass border-electric-cyan/20 focus:border-electric-cyan text-white min-h-[120px]"
+                  placeholder="Any additional information that might help donors..."
+                />
+              </div>
+
+              {/* Submit Button */}
+              <div className="flex justify-center">
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="bg-gradient-to-r from-neon-pink to-electric-cyan hover:from-neon-pink/90 hover:to-electric-cyan/90 text-white px-16 py-4 text-lg font-semibold rounded-full transform hover:scale-105 transition-all duration-300 animate-glow"
+                >
+                  <Clock className="w-6 h-6 mr-3" />
+                  Submit Blood Request
+                </Button>
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </div>
