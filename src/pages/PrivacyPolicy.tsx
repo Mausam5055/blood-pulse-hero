@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Shield, Lock, Eye, FileText, AlertTriangle, CheckCircle, Users, Database } from 'lucide-react';
+import { ArrowLeft, Shield, Lock, Eye, FileText, AlertTriangle, CheckCircle, Users, Database, Mail } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
 const PrivacyPolicy = () => {
