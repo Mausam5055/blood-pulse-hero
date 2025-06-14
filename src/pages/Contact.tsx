@@ -54,7 +54,7 @@ const Contact = () => {
 
       <Navbar />
       
-      <div className="relative z-10 pt-20 pb-16 px-4 sm:px-6 lg:px-8 overflow-y-auto">
+      <div className="relative z-10 pt-20 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-16">
           {/* Header Section */}
           <div className="text-center animate-fade-in">
@@ -225,8 +225,8 @@ const Contact = () => {
             </div>
 
             {/* Contact Form - Expanded for desktop */}
-            <div className="xl:col-span-3">
-              <Card className="glass-card border-white/10 animate-slide-up h-full">
+            <div className="xl:col-span-3 space-y-8">
+              <Card className="glass-card border-white/10 animate-slide-up">
                 <CardHeader className="pb-8">
                   <CardTitle className="text-4xl font-bold text-soft-white mb-2">
                     Send us a Message
@@ -343,6 +343,28 @@ const Contact = () => {
                   </form>
                 </CardContent>
               </Card>
+
+              {/* Professional Contact Image - Desktop Only */}
+              <div className="hidden xl:block">
+                <Card className="glass-card border-white/10 overflow-hidden">
+                  <div className="relative h-80">
+                    <img
+                      src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+                      alt="Professional healthcare team ready to assist"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-8">
+                      <h3 className="text-3xl font-bold text-white mb-2">
+                        We're Here to Help
+                      </h3>
+                      <p className="text-white/90 text-lg">
+                        Our dedicated team of professionals is committed to providing you with exceptional support and assistance.
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              </div>
             </div>
           </div>
 
