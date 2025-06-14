@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -19,7 +20,7 @@ const PrivacyPolicy = () => {
       <Navbar />
       
       <div className="relative z-10 pt-20 pb-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           {/* Back Button */}
           <div className="mb-8 animate-fade-in">
             <Link to="/">
@@ -30,7 +31,7 @@ const PrivacyPolicy = () => {
             </Link>
           </div>
 
-          {/* Header */}
+          {/* Header - Full Width */}
           <div className="glass-card p-6 sm:p-8 rounded-2xl mb-8 animate-slide-up bg-gray-900/50 border-red-500/20">
             <div className="flex items-center mb-6">
               <Shield className="w-8 h-8 text-red-500 mr-4" />
@@ -47,10 +48,11 @@ const PrivacyPolicy = () => {
             </div>
           </div>
 
-          {/* Content */}
-          <div className="glass-card p-6 sm:p-8 rounded-2xl animate-slide-up bg-gray-900/50 border-red-500/20">
-            <div className="privacy-content">
-              <section className="mb-8">
+          {/* Content - Two Column Layout on Desktop */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left Column */}
+            <div className="space-y-8">
+              <div className="glass-card p-6 sm:p-8 rounded-2xl animate-slide-up bg-gray-900/50 border-red-500/20">
                 <div className="flex items-center mb-4">
                   <Eye className="w-6 h-6 text-red-500 mr-3" />
                   <h2 className="text-2xl font-bold text-white">Information We Collect</h2>
@@ -82,9 +84,43 @@ const PrivacyPolicy = () => {
                   <li>Device type and operating system</li>
                   <li>Pages visited and time spent on site</li>
                 </ul>
-              </section>
+              </div>
 
-              <section className="mb-8">
+              <div className="glass-card p-6 sm:p-8 rounded-2xl animate-slide-up bg-gray-900/50 border-red-500/20">
+                <div className="flex items-center mb-4">
+                  <Lock className="w-6 h-6 text-red-500 mr-3" />
+                  <h2 className="text-2xl font-bold text-white">How We Protect Your Information</h2>
+                </div>
+
+                <div className="grid grid-cols-1 gap-6 mb-6">
+                  <div className="security-item bg-gray-800/50 border border-red-500/20 p-6 rounded-xl">
+                    <h4 className="text-lg font-semibold text-red-400 mb-2">Technical Safeguards</h4>
+                    <p className="text-gray-300 text-sm">We use industry-standard encryption, secure servers, and regular security audits to protect your data.</p>
+                  </div>
+                  <div className="security-item bg-gray-800/50 border border-red-500/20 p-6 rounded-xl">
+                    <h4 className="text-lg font-semibold text-red-400 mb-2">Physical Security</h4>
+                    <p className="text-gray-300 text-sm">Our facilities have restricted access, surveillance systems, and secure storage for physical records.</p>
+                  </div>
+                  <div className="security-item bg-gray-800/50 border border-red-500/20 p-6 rounded-xl">
+                    <h4 className="text-lg font-semibold text-red-400 mb-2">Administrative Controls</h4>
+                    <p className="text-gray-300 text-sm">Staff receive privacy training and access is limited to authorized personnel only.</p>
+                  </div>
+                </div>
+
+                <h3 className="text-xl font-semibold text-red-400 mt-6 mb-3">Data Retention</h3>
+                <p className="text-gray-300 mb-4">We retain your information for the following periods:</p>
+                <ul className="enhanced-list text-gray-300">
+                  <li><strong>Active donors:</strong> As long as you remain an active donor</li>
+                  <li><strong>Inactive donors:</strong> 10 years after last donation</li>
+                  <li><strong>Medical records:</strong> As required by law (typically 10-25 years)</li>
+                  <li><strong>Website data:</strong> 2 years or as permitted by law</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Right Column */}
+            <div className="space-y-8">
+              <div className="glass-card p-6 sm:p-8 rounded-2xl animate-slide-up bg-gray-900/50 border-red-500/20">
                 <div className="flex items-center mb-4">
                   <Users className="w-6 h-6 text-red-500 mr-3" />
                   <h2 className="text-2xl font-bold text-white">How We Use Your Information</h2>
@@ -120,47 +156,16 @@ const PrivacyPolicy = () => {
                   <li>Comply with regulatory requirements</li>
                   <li>Investigate and prevent fraud</li>
                 </ul>
-              </section>
+              </div>
 
-              <section className="mb-8">
-                <div className="flex items-center mb-4">
-                  <Lock className="w-6 h-6 text-red-500 mr-3" />
-                  <h2 className="text-2xl font-bold text-white">How We Protect Your Information</h2>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                  <div className="security-item bg-gray-800/50 border border-red-500/20 p-6 rounded-xl">
-                    <h4 className="text-lg font-semibold text-red-400 mb-2">Technical Safeguards</h4>
-                    <p className="text-gray-300 text-sm">We use industry-standard encryption, secure servers, and regular security audits to protect your data.</p>
-                  </div>
-                  <div className="security-item bg-gray-800/50 border border-red-500/20 p-6 rounded-xl">
-                    <h4 className="text-lg font-semibold text-red-400 mb-2">Physical Security</h4>
-                    <p className="text-gray-300 text-sm">Our facilities have restricted access, surveillance systems, and secure storage for physical records.</p>
-                  </div>
-                  <div className="security-item bg-gray-800/50 border border-red-500/20 p-6 rounded-xl">
-                    <h4 className="text-lg font-semibold text-red-400 mb-2">Administrative Controls</h4>
-                    <p className="text-gray-300 text-sm">Staff receive privacy training and access is limited to authorized personnel only.</p>
-                  </div>
-                </div>
-
-                <h3 className="text-xl font-semibold text-red-400 mt-6 mb-3">Data Retention</h3>
-                <p className="text-gray-300 mb-4">We retain your information for the following periods:</p>
-                <ul className="enhanced-list text-gray-300">
-                  <li><strong>Active donors:</strong> As long as you remain an active donor</li>
-                  <li><strong>Inactive donors:</strong> 10 years after last donation</li>
-                  <li><strong>Medical records:</strong> As required by law (typically 10-25 years)</li>
-                  <li><strong>Website data:</strong> 2 years or as permitted by law</li>
-                </ul>
-              </section>
-
-              <section className="mb-8">
+              <div className="glass-card p-6 sm:p-8 rounded-2xl animate-slide-up bg-gray-900/50 border-red-500/20">
                 <div className="flex items-center mb-4">
                   <Mail className="w-6 h-6 text-red-500 mr-3" />
                   <h2 className="text-2xl font-bold text-white">Contact Us</h2>
                 </div>
                 <p className="text-gray-300 mb-6">If you have questions about this privacy policy or our privacy practices, please contact us:</p>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6">
                   <div className="contact-item bg-gray-800/50 border border-red-500/20 p-6 rounded-xl">
                     <h4 className="text-lg font-semibold text-red-400 mb-2">Privacy Officer</h4>
                     <p className="text-gray-300 text-sm">Email: privacy@lifelineblood.org</p>
@@ -174,7 +179,12 @@ const PrivacyPolicy = () => {
                     Medical City, MC 12345</p>
                   </div>
                 </div>
-              </section>
+
+                <div className="final-note bg-red-500/10 border border-red-500/20 p-6 rounded-xl mt-8 text-center">
+                  <h4 className="text-lg font-semibold text-red-400 mb-2">Your Rights</h4>
+                  <p className="text-gray-300">You have the right to access, correct, or delete your personal information. Contact us to exercise these rights.</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -186,19 +196,19 @@ const PrivacyPolicy = () => {
           line-height: 1.7;
         }
         
-        .privacy-content .enhanced-list {
+        .enhanced-list {
           list-style: none;
           padding-left: 0;
           margin: 1rem 0;
         }
         
-        .privacy-content .enhanced-list li {
+        .enhanced-list li {
           position: relative;
           padding-left: 1.5rem;
           margin-bottom: 0.5rem;
         }
         
-        .privacy-content .enhanced-list li:before {
+        .enhanced-list li:before {
           content: "▸";
           position: absolute;
           left: 0;
