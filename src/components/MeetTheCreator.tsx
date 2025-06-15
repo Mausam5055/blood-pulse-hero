@@ -24,8 +24,8 @@ const MeetTheCreator = () => {
               <div className="w-80 h-96 bg-gradient-to-br from-red-500/20 to-red-600/20 p-1 rounded-2xl overflow-hidden shadow-2xl">
                 <div className="w-full h-full rounded-xl overflow-hidden border border-red-500/30 bg-gray-900">
                   <img
-                    src="/lovable-uploads/e0b9cc04-778d-4b53-8e28-0e3d48912c66.png"
-                    alt="App Creator"
+                    src="/lovable-uploads/8ddba743-7775-41bb-8421-21504d01c737.png"
+                    alt="Mausam Kar - App Creator"
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -50,10 +50,13 @@ const MeetTheCreator = () => {
           <div className="space-y-8 lg:pl-8">
             <div>
               <h3 className="text-4xl lg:text-5xl font-bold text-white mb-2">
-                Alex Johnson
+                Mausam Kar
               </h3>
-              <p className="text-xl text-red-400 font-semibold mb-6">
-                Full Stack Developer & Life Enthusiast
+              <p className="text-xl text-red-400 font-semibold mb-2">
+                Computer Science Engineering Student
+              </p>
+              <p className="text-lg text-gray-300 mb-6">
+                VIT University • Assam, India
               </p>
               
               <div className="space-y-6 text-gray-300 text-lg leading-relaxed">
@@ -65,8 +68,8 @@ const MeetTheCreator = () => {
                 </p>
                 
                 <p>
-                  Every line of code in this application was written with the hope that it might save a life. 
-                  Blood donation is one of the most selfless acts of humanity, and I wanted to make it more accessible.
+                  As a Computer Science student at VIT, I believe every line of code in this application was written with the hope that it might save a life. 
+                  Blood donation is one of the most selfless acts of humanity, and I wanted to make it more accessible through technology.
                 </p>
                 
                 <div className="bg-gradient-to-r from-red-500/10 to-red-600/10 p-6 rounded-xl border border-red-500/20">
@@ -100,7 +103,7 @@ const MeetTheCreator = () => {
               </a>
               
               <a
-                href="mailto:alex@lifegiver.com"
+                href="mailto:mausam@lifegiver.com"
                 className="group relative p-4 rounded-xl bg-gray-900/80 border border-red-500/20 text-white hover:border-red-500/50 transition-all duration-300 hover:scale-105"
               >
                 <Mail className="w-6 h-6 group-hover:text-red-500 transition-colors" />
@@ -114,7 +117,7 @@ const MeetTheCreator = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto mt-20">
           <Card className="bg-gray-900/50 border-red-500/20 hover:border-red-500/40 transition-all duration-300 group backdrop-blur-sm">
             <CardContent className="p-8 text-center">
-              <div className="text-4xl font-bold text-red-500 mb-2 group-hover:scale-110 transition-transform">5+</div>
+              <div className="text-4xl font-bold text-red-500 mb-2 group-hover:scale-110 transition-transform">3+</div>
               <div className="text-gray-300 text-lg">Years of Experience</div>
               <Star className="w-6 h-6 text-red-500/50 mx-auto mt-4" />
             </CardContent>
@@ -122,7 +125,7 @@ const MeetTheCreator = () => {
           
           <Card className="bg-gray-900/50 border-red-500/20 hover:border-red-500/40 transition-all duration-300 group backdrop-blur-sm">
             <CardContent className="p-8 text-center">
-              <div className="text-4xl font-bold text-red-500 mb-2 group-hover:scale-110 transition-transform">50+</div>
+              <div className="text-4xl font-bold text-red-500 mb-2 group-hover:scale-110 transition-transform">25+</div>
               <div className="text-gray-300 text-lg">Projects Completed</div>
               <Code className="w-6 h-6 text-red-500/50 mx-auto mt-4" />
             </CardContent>
@@ -130,8 +133,8 @@ const MeetTheCreator = () => {
           
           <Card className="bg-gray-900/50 border-red-500/20 hover:border-red-500/40 transition-all duration-300 group backdrop-blur-sm">
             <CardContent className="p-8 text-center">
-              <div className="text-4xl font-bold text-red-500 mb-2 group-hover:scale-110 transition-transform">O+</div>
-              <div className="text-gray-300 text-lg">Blood Type (Universal Donor)</div>
+              <div className="text-4xl font-bold text-red-500 mb-2 group-hover:scale-110 transition-transform">B+</div>
+              <div className="text-gray-300 text-lg">Blood Type</div>
               <Heart className="w-6 h-6 text-red-500/50 mx-auto mt-4" fill="currentColor" />
             </CardContent>
           </Card>
