@@ -1,12 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Heart, Menu, X, User, LogIn } from 'lucide-react';
+import { Heart, Menu, X, User, LogIn, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import ProfileAvatar from './ProfileAvatar';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,6 +31,12 @@ const Navbar = () => {
     { name: 'Hospitals', href: '/hospitals' },
     { name: 'Contact', href: '/contact' },
   ];
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+    setIsMobileMenuOpen(false);
+  };
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -56,23 +65,39 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Desktop Auth Buttons */}
+          {/* Desktop Auth Buttons or Profile */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate('/auth?mode=login')}
-              className="text-dark-text/70 hover:text-neon-pink hover:bg-transparent"
-            >
-              <LogIn className="w-4 h-4 mr-2" />
-              Login
-            </Button>
-            <Button 
-              onClick={() => navigate('/auth?mode=signup')}
-              className="bg-gradient-to-r from-neon-pink to-neon-pink/80 hover:from-neon-pink/90 hover:to-neon-pink text-white"
-            >
-              <User className="w-4 h-4 mr-2" />
-              Register
-            </Button>
+            {user ? (
+              <div className="flex items-center space-x-3">
+                <Button 
+                  variant="ghost" 
+                  onClick={handleSignOut}
+                  className="text-dark-text/70 hover:text-neon-pink hover:bg-transparent"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
+                </Button>
+                <ProfileAvatar />
+              </div>
+            ) : (
+              <>
+                <Button 
+                  variant="ghost" 
+                  onClick={() => navigate('/auth?mode=login')}
+                  className="text-dark-text/70 hover:text-neon-pink hover:bg-transparent"
+                >
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Login
+                </Button>
+                <Button 
+                  onClick={() => navigate('/auth?mode=signup')}
+                  className="bg-gradient-to-r from-neon-pink to-neon-pink/80 hover:from-neon-pink/90 hover:to-neon-pink text-white"
+                >
+                  <User className="w-4 h-4 mr-2" />
+                  Register
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -105,27 +130,48 @@ const Navbar = () => {
                 </button>
               ))}
               <div className="flex flex-col space-y-2 px-3 pt-4">
-                <Button 
-                  variant="ghost" 
-                  onClick={() => {
-                    navigate('/auth?mode=login');
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="text-dark-text/70 hover:text-neon-pink hover:bg-transparent justify-start"
-                >
-                  <LogIn className="w-4 h-4 mr-2" />
-                  Login
-                </Button>
-                <Button 
-                  onClick={() => {
-                    navigate('/auth?mode=signup');
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="bg-gradient-to-r from-neon-pink to-neon-pink/80 text-white justify-start"
-                >
-                  <User className="w-4 h-4 mr-2" />
-                  Register
-                </Button>
+                {user ? (
+                  <>
+                    <div className="flex items-center space-x-3 py-2">
+                      <ProfileAvatar />
+                      <span className="text-soft-white text-sm">
+                        {user.user_metadata?.full_name || user.email}
+                      </span>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      onClick={handleSignOut}
+                      className="text-dark-text/70 hover:text-neon-pink hover:bg-transparent justify-start"
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => {
+                        navigate('/auth?mode=login');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="text-dark-text/70 hover:text-neon-pink hover:bg-transparent justify-start"
+                    >
+                      <LogIn className="w-4 h-4 mr-2" />
+                      Login
+                    </Button>
+                    <Button 
+                      onClick={() => {
+                        navigate('/auth?mode=signup');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="bg-gradient-to-r from-neon-pink to-neon-pink/80 text-white justify-start"
+                    >
+                      <User className="w-4 h-4 mr-2" />
+                      Register
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>

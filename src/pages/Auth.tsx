@@ -1,17 +1,23 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Eye, EyeOff, Heart, Droplets, Shield, Users } from 'lucide-react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
   const mode = searchParams.get('mode');
   const [isLogin, setIsLogin] = useState(mode !== 'signup');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -20,6 +26,13 @@ const Auth = () => {
     bloodGroup: '',
     phone: ''
   });
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   useEffect(() => {
     if (mode === 'signup') {
@@ -36,11 +49,71 @@ const Auth = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle authentication logic here
-    console.log('Form submitted:', formData);
+    setLoading(true);
+
+    try {
+      if (isLogin) {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
+        });
+
+        if (error) throw error;
+        
+        if (data.user) {
+          toast({
+            title: "Welcome back!",
+            description: "You have successfully signed in.",
+          });
+          navigate('/dashboard');
+        }
+      } else {
+        // Signup validation
+        if (formData.password !== formData.confirmPassword) {
+          throw new Error('Passwords do not match');
+        }
+
+        const { data, error } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/`,
+            data: {
+              full_name: formData.fullName,
+              blood_group: formData.bloodGroup,
+              phone: formData.phone,
+            }
+          }
+        });
+
+        if (error) throw error;
+
+        if (data.user) {
+          toast({
+            title: "Account created!",
+            description: "Please check your email to verify your account.",
+          });
+          // Navigate to dashboard after successful signup
+          navigate('/dashboard');
+        }
+      }
+    } catch (error: any) {
+      console.error('Auth error:', error);
+      toast({
+        title: "Error",
+        description: error.message || "An error occurred during authentication",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (user) {
+    return null; // Will redirect via useEffect
+  }
 
   return (
     <div className="min-h-screen flex bg-black">
@@ -255,10 +328,11 @@ const Auth = () => {
 
                 <Button 
                   type="submit" 
-                  className="w-full bg-gradient-to-r from-red-600 to-red-500 text-white font-semibold py-4 rounded-lg hover:scale-105 transition-all duration-300 text-lg"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-red-600 to-red-500 text-white font-semibold py-4 rounded-lg hover:scale-105 transition-all duration-300 text-lg disabled:opacity-50"
                 >
                   <Droplets className="w-5 h-5 mr-3" />
-                  {isLogin ? 'Sign In' : 'Create Account'}
+                  {loading ? 'Loading...' : (isLogin ? 'Sign In' : 'Create Account')}
                 </Button>
 
                 <div className="relative">
