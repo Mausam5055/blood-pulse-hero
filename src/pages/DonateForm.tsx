@@ -4,14 +4,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Heart, CheckCircle } from 'lucide-react';
+import { Heart, CheckCircle, User, Phone, MapPin, Calendar, Droplets } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import html2pdf from 'html2pdf.js';
 import Navbar from '../components/Navbar';
-import { Download } from 'lucide-react';
 
 interface DonorFormData {
   full_name: string;
@@ -296,11 +295,19 @@ const DonateForm = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-black">
+      <div className="min-h-screen bg-background">
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1615461066841-6116e61058f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+            alt="Background"
+            className="w-full h-full object-cover opacity-20"
+          />
+          <div className="absolute inset-0 bg-background/80" />
+        </div>
         <Navbar />
-        <div className="pt-20 pb-16 px-4 flex items-center justify-center">
+        <div className="relative z-10 pt-20 pb-16 px-4 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-xl text-white">Please log in to register as a donor.</p>
+            <p className="text-xl text-soft-white">Please log in to register as a donor.</p>
             <Button 
               onClick={() => navigate('/auth')}
               className="mt-4 bg-gradient-to-r from-neon-pink to-electric-cyan text-white"
@@ -315,16 +322,24 @@ const DonateForm = () => {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-black">
+      <div className="min-h-screen bg-background">
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1615461066841-6116e61058f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+            alt="Background"
+            className="w-full h-full object-cover opacity-20"
+          />
+          <div className="absolute inset-0 bg-background/80" />
+        </div>
         <Navbar />
-        <div className="pt-20 pb-16 px-4 flex items-center justify-center">
-          <Card className="max-w-md w-full backdrop-blur-lg bg-white/5 border border-white/10 text-center">
+        <div className="relative z-10 pt-20 pb-16 px-4 flex items-center justify-center">
+          <Card className="max-w-md w-full glass-card animate-fade-in">
             <CardHeader>
-              <div className="w-16 h-16 bg-gradient-to-r from-neon-pink to-electric-cyan rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-gradient-to-r from-neon-pink to-electric-cyan rounded-full flex items-center justify-center mx-auto mb-4 animate-heartbeat">
                 <CheckCircle className="w-8 h-8 text-white" />
               </div>
-              <CardTitle className="text-white">Registration Successful!</CardTitle>
-              <CardDescription className="text-white/70">
+              <CardTitle className="text-soft-white text-center">Registration Successful!</CardTitle>
+              <CardDescription className="text-dark-text/70 text-center">
                 You've been registered as a donor. Your certificate has been generated and saved.
               </CardDescription>
             </CardHeader>
@@ -338,7 +353,7 @@ const DonateForm = () => {
               <Button 
                 onClick={() => navigate('/dashboard')} 
                 variant="outline" 
-                className="w-full border-white/20 text-white hover:bg-white/10"
+                className="w-full border-electric-cyan/50 text-electric-cyan hover:bg-electric-cyan/10"
               >
                 Go to Dashboard
               </Button>
@@ -350,44 +365,68 @@ const DonateForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-background">
+      <div className="absolute inset-0 z-0">
+        <img
+          src="https://images.unsplash.com/photo-1615461066841-6116e61058f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+          alt="Background"
+          className="w-full h-full object-cover opacity-20"
+        />
+        <div className="absolute inset-0 bg-background/80" />
+      </div>
+
       <Navbar />
-      <div className="pt-20 pb-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-neon-pink to-electric-cyan rounded-full flex items-center justify-center mx-auto mb-4">
-              <Heart className="w-8 h-8 text-white" fill="currentColor" />
+      
+      <div className="relative z-10 pt-20 pb-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-12 animate-fade-in">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-neon-pink to-electric-cyan rounded-full mb-6 animate-heartbeat">
+              <Heart className="w-10 h-10 text-white" fill="currentColor" />
             </div>
-            <h1 className="text-4xl font-bold text-white mb-2">Become a Donor</h1>
-            <p className="text-white/70">Register to save lives and help those in need</p>
+            <h1 className="text-5xl md:text-6xl font-bold text-soft-white mb-6">
+              Become a Hero
+            </h1>
+            <p className="text-xl text-dark-text/80 max-w-2xl mx-auto">
+              Join our community of life-saving donors and make a difference in someone's life today
+            </p>
           </div>
 
-          <Card className="backdrop-blur-lg bg-white/5 border border-white/10">
+          <Card className="glass-card animate-slide-up">
             <CardHeader>
-              <CardTitle className="text-white">Donor Registration</CardTitle>
-              <CardDescription className="text-white/70">
+              <CardTitle className="text-soft-white flex items-center">
+                <Heart className="w-6 h-6 mr-2 text-neon-pink" fill="currentColor" />
+                Donor Registration
+              </CardTitle>
+              <CardDescription className="text-dark-text/70">
                 Fill out your information to register as a blood donor
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="full_name" className="text-white">Full Name *</Label>
+                    <Label htmlFor="full_name" className="text-soft-white flex items-center">
+                      <User className="w-4 h-4 mr-2 text-neon-pink" />
+                      Full Name *
+                    </Label>
                     <Input
                       id="full_name"
                       value={formData.full_name}
                       onChange={(e) => handleInputChange('full_name', e.target.value)}
-                      className="bg-black/30 border-white/20 text-white"
+                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
                       placeholder="Enter your full name"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-white">Blood Group *</Label>
+                    <Label className="text-soft-white flex items-center">
+                      <Droplets className="w-4 h-4 mr-2 text-neon-pink" />
+                      Blood Group *
+                    </Label>
                     <Select onValueChange={(value) => handleInputChange('blood_group', value)} required>
-                      <SelectTrigger className="bg-black/30 border-white/20 text-white">
+                      <SelectTrigger className="glass border-electric-cyan/20 text-white">
                         <SelectValue placeholder="Select blood group" />
                       </SelectTrigger>
                       <SelectContent>
@@ -401,7 +440,10 @@ const DonateForm = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="age" className="text-white">Age *</Label>
+                    <Label htmlFor="age" className="text-soft-white flex items-center">
+                      <Calendar className="w-4 h-4 mr-2 text-neon-pink" />
+                      Age *
+                    </Label>
                     <Input
                       id="age"
                       type="number"
@@ -409,43 +451,52 @@ const DonateForm = () => {
                       max="65"
                       value={formData.age}
                       onChange={(e) => handleInputChange('age', e.target.value)}
-                      className="bg-black/30 border-white/20 text-white"
+                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
                       placeholder="Enter your age"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone_number" className="text-white">Phone Number *</Label>
+                    <Label htmlFor="phone_number" className="text-soft-white flex items-center">
+                      <Phone className="w-4 h-4 mr-2 text-neon-pink" />
+                      Phone Number *
+                    </Label>
                     <Input
                       id="phone_number"
                       value={formData.phone_number}
                       onChange={(e) => handleInputChange('phone_number', e.target.value)}
-                      className="bg-black/30 border-white/20 text-white"
+                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
                       placeholder="Enter your phone number"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="city" className="text-white">City *</Label>
+                    <Label htmlFor="city" className="text-soft-white flex items-center">
+                      <MapPin className="w-4 h-4 mr-2 text-neon-pink" />
+                      City *
+                    </Label>
                     <Input
                       id="city"
                       value={formData.city}
                       onChange={(e) => handleInputChange('city', e.target.value)}
-                      className="bg-black/30 border-white/20 text-white"
+                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
                       placeholder="Enter your city"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="state" className="text-white">State *</Label>
+                    <Label htmlFor="state" className="text-soft-white flex items-center">
+                      <MapPin className="w-4 h-4 mr-2 text-neon-pink" />
+                      State *
+                    </Label>
                     <Input
                       id="state"
                       value={formData.state}
                       onChange={(e) => handleInputChange('state', e.target.value)}
-                      className="bg-black/30 border-white/20 text-white"
+                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
                       placeholder="Enter your state"
                       required
                     />
@@ -455,9 +506,10 @@ const DonateForm = () => {
                 <Button
                   type="submit"
                   disabled={loading || !formData.full_name || !formData.blood_group || !formData.age || !formData.phone_number || !formData.city || !formData.state}
-                  className="w-full bg-gradient-to-r from-neon-pink to-electric-cyan text-white py-3"
+                  className="w-full bg-gradient-to-r from-neon-pink to-electric-cyan hover:from-neon-pink/90 hover:to-electric-cyan/90 text-white py-6 text-lg font-semibold rounded-xl transform hover:scale-105 transition-all duration-300 animate-glow"
                 >
-                  {loading ? 'Registering...' : 'Register as Donor'}
+                  <Heart className="w-6 h-6 mr-3" fill="currentColor" />
+                  {loading ? 'Registering...' : 'Register as Hero Donor'}
                 </Button>
               </form>
             </CardContent>

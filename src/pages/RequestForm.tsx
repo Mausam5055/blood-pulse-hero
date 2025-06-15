@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Droplets, CheckCircle } from 'lucide-react';
+import { Droplets, CheckCircle, User, Phone, MapPin, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -183,11 +182,19 @@ const RequestForm = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-black">
+      <div className="min-h-screen bg-background">
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+            alt="Background"
+            className="w-full h-full object-cover opacity-20"
+          />
+          <div className="absolute inset-0 bg-background/80" />
+        </div>
         <Navbar />
-        <div className="pt-20 pb-16 px-4 flex items-center justify-center">
+        <div className="relative z-10 pt-20 pb-16 px-4 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-xl text-white">Please log in to submit a blood request.</p>
+            <p className="text-xl text-soft-white">Please log in to submit a blood request.</p>
             <Button 
               onClick={() => navigate('/auth')}
               className="mt-4 bg-gradient-to-r from-neon-pink to-electric-cyan text-white"
@@ -202,16 +209,24 @@ const RequestForm = () => {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-black">
+      <div className="min-h-screen bg-background">
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+            alt="Background"
+            className="w-full h-full object-cover opacity-20"
+          />
+          <div className="absolute inset-0 bg-background/80" />
+        </div>
         <Navbar />
-        <div className="pt-20 pb-16 px-4 flex items-center justify-center">
-          <Card className="max-w-md w-full backdrop-blur-lg bg-white/5 border border-white/10 text-center">
+        <div className="relative z-10 pt-20 pb-16 px-4 flex items-center justify-center">
+          <Card className="max-w-md w-full glass-card animate-fade-in">
             <CardHeader>
-              <div className="w-16 h-16 bg-gradient-to-r from-neon-pink to-electric-cyan rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-gradient-to-r from-neon-pink to-electric-cyan rounded-full flex items-center justify-center mx-auto mb-4 animate-heartbeat">
                 <CheckCircle className="w-8 h-8 text-white" />
               </div>
-              <CardTitle className="text-white">Request Submitted!</CardTitle>
-              <CardDescription className="text-white/70">
+              <CardTitle className="text-soft-white text-center">Request Submitted!</CardTitle>
+              <CardDescription className="text-dark-text/70 text-center">
                 Your blood request has been submitted. Donors in your area will be notified.
               </CardDescription>
             </CardHeader>
@@ -225,7 +240,7 @@ const RequestForm = () => {
               <Button 
                 onClick={() => navigate('/dashboard')} 
                 variant="outline" 
-                className="w-full border-white/20 text-white hover:bg-white/10"
+                className="w-full border-electric-cyan/50 text-electric-cyan hover:bg-electric-cyan/10"
               >
                 Go to Dashboard
               </Button>
@@ -237,95 +252,131 @@ const RequestForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-background">
+      <div className="absolute inset-0 z-0">
+        <img
+          src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+          alt="Background"
+          className="w-full h-full object-cover opacity-20"
+        />
+        <div className="absolute inset-0 bg-background/80" />
+      </div>
+
       <Navbar />
-      <div className="pt-20 pb-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-neon-pink to-electric-cyan rounded-full flex items-center justify-center mx-auto mb-4">
-              <Droplets className="w-8 h-8 text-white" />
+      
+      <div className="relative z-10 pt-20 pb-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-12 animate-fade-in">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-neon-pink to-electric-cyan rounded-full mb-6 animate-heartbeat">
+              <Droplets className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-4xl font-bold text-white mb-2">Request Blood</h1>
-            <p className="text-white/70">Submit your blood request to connect with donors</p>
+            <h1 className="text-5xl md:text-6xl font-bold text-soft-white mb-6">
+              Request Blood
+            </h1>
+            <p className="text-xl text-dark-text/80 max-w-2xl mx-auto">
+              Connect with our network of generous donors and get the help you need
+            </p>
           </div>
 
-          <Card className="backdrop-blur-lg bg-white/5 border border-white/10">
+          <Card className="glass-card animate-slide-up">
             <CardHeader>
-              <CardTitle className="text-white">Blood Request Form</CardTitle>
-              <CardDescription className="text-white/70">
+              <CardTitle className="text-soft-white flex items-center">
+                <Droplets className="w-6 h-6 mr-2 text-neon-pink" />
+                Blood Request Form
+              </CardTitle>
+              <CardDescription className="text-dark-text/70">
                 Fill out your information to request blood from our donor network
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="name" className="text-white">Patient/Contact Name *</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange('name', e.target.value)}
-                    className="bg-black/30 border-white/20 text-white"
-                    placeholder="Enter patient or contact person name"
-                    required
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-soft-white flex items-center">
+                      <User className="w-4 h-4 mr-2 text-neon-pink" />
+                      Patient/Contact Name *
+                    </Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                      placeholder="Enter patient or contact person name"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-soft-white flex items-center">
+                      <Droplets className="w-4 h-4 mr-2 text-neon-pink" />
+                      Blood Group Needed *
+                    </Label>
+                    <Select onValueChange={(value) => handleInputChange('blood_group_needed', value)} required>
+                      <SelectTrigger className="glass border-electric-cyan/20 text-white">
+                        <SelectValue placeholder="Select blood group needed" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {bloodGroups.map((group) => (
+                          <SelectItem key={group} value={group}>
+                            {group}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="location" className="text-soft-white flex items-center">
+                      <MapPin className="w-4 h-4 mr-2 text-neon-pink" />
+                      Location (City, State) *
+                    </Label>
+                    <Input
+                      id="location"
+                      value={formData.location}
+                      onChange={(e) => handleInputChange('location', e.target.value)}
+                      placeholder="e.g., New York, NY"
+                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="contact_details" className="text-soft-white flex items-center">
+                      <Phone className="w-4 h-4 mr-2 text-neon-pink" />
+                      Contact Details *
+                    </Label>
+                    <Input
+                      id="contact_details"
+                      value={formData.contact_details}
+                      onChange={(e) => handleInputChange('contact_details', e.target.value)}
+                      placeholder="Phone number, email, or other contact info"
+                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                      required
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-white">Blood Group Needed *</Label>
-                  <Select onValueChange={(value) => handleInputChange('blood_group_needed', value)} required>
-                    <SelectTrigger className="bg-black/30 border-white/20 text-white">
-                      <SelectValue placeholder="Select blood group needed" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {bloodGroups.map((group) => (
-                        <SelectItem key={group} value={group}>
-                          {group}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="location" className="text-white">Location (City, State) *</Label>
-                  <Input
-                    id="location"
-                    value={formData.location}
-                    onChange={(e) => handleInputChange('location', e.target.value)}
-                    placeholder="e.g., New York, NY"
-                    className="bg-black/30 border-white/20 text-white"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="contact_details" className="text-white">Contact Details *</Label>
-                  <Input
-                    id="contact_details"
-                    value={formData.contact_details}
-                    onChange={(e) => handleInputChange('contact_details', e.target.value)}
-                    placeholder="Phone number, email, or other contact info"
-                    className="bg-black/30 border-white/20 text-white"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="message" className="text-white">Additional Message (Optional)</Label>
+                  <Label htmlFor="message" className="text-soft-white flex items-center">
+                    <MessageSquare className="w-4 h-4 mr-2 text-neon-pink" />
+                    Additional Message (Optional)
+                  </Label>
                   <Textarea
                     id="message"
                     value={formData.message}
                     onChange={(e) => handleInputChange('message', e.target.value)}
                     placeholder="Any additional details about your request..."
-                    className="bg-black/30 border-white/20 text-white min-h-[100px]"
+                    className="glass border-electric-cyan/20 focus:border-electric-cyan text-white min-h-[100px]"
                   />
                 </div>
 
                 <Button
                   type="submit"
                   disabled={loading || !formData.name || !formData.blood_group_needed || !formData.location || !formData.contact_details}
-                  className="w-full bg-gradient-to-r from-neon-pink to-electric-cyan text-white py-3"
+                  className="w-full bg-gradient-to-r from-neon-pink to-electric-cyan hover:from-neon-pink/90 hover:to-electric-cyan/90 text-white py-6 text-lg font-semibold rounded-xl transform hover:scale-105 transition-all duration-300 animate-glow"
                 >
+                  <Droplets className="w-6 h-6 mr-3" />
                   {loading ? 'Submitting...' : 'Submit Blood Request'}
                 </Button>
               </form>
