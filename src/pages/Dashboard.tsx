@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -222,7 +223,7 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Your Blood Requests - Updated */}
+              {/* Your Blood Requests */}
               <div className="glass-card p-6 rounded-2xl animate-slide-up">
                 <h3 className="text-xl font-semibold text-rich-charcoal dark:text-soft-white mb-4 flex items-center">
                   <Droplets className="w-5 h-5 mr-2 text-deep-coral dark:text-neon-pink" />
@@ -239,7 +240,7 @@ const Dashboard = () => {
                     <Droplets className="w-12 h-12 text-rich-charcoal/20 dark:text-dark-text/20 mx-auto mb-4" />
                     <p className="text-rich-charcoal/60 dark:text-dark-text/60 mb-4">You haven't submitted any blood requests yet.</p>
                     <Button 
-                      onClick={() => navigate('/request-form')}
+                      onClick={() => navigate('/blood-request')}
                       className="bg-gradient-to-r from-deep-coral to-soft-teal dark:from-neon-pink dark:to-electric-cyan text-white"
                     >
                       Submit a Request
@@ -389,27 +390,34 @@ const Dashboard = () => {
                 </Button>
               </div>
 
-              {/* Quick Actions */}
+              {/* Quick Actions - Updated to navigate to navbar pages */}
               <div className="glass-card p-6 rounded-2xl animate-fade-in">
                 <h3 className="text-xl font-semibold text-rich-charcoal dark:text-soft-white mb-4">
                   Quick Actions
                 </h3>
                 <div className="space-y-3">
                   <Button 
-                    onClick={() => navigate('/donate-form')}
+                    onClick={() => navigate('/donor-registration')}
+                    className="w-full bg-gradient-to-r from-deep-coral to-soft-teal dark:from-neon-pink dark:to-electric-cyan text-white hover:opacity-90"
+                  >
+                    <Heart className="w-4 h-4 mr-2" />
+                    Become a Donor
+                  </Button>
+                  <Button 
+                    onClick={() => navigate('/blood-request')}
+                    variant="outline" 
+                    className="w-full border-deep-coral/20 dark:border-electric-cyan/20 hover:bg-transparent hover:border-deep-coral/20 dark:hover:border-electric-cyan/20"
+                  >
+                    <Droplets className="w-4 h-4 mr-2" />
+                    Request Blood
+                  </Button>
+                  <Button 
+                    onClick={() => navigate('/requests')}
                     variant="outline" 
                     className="w-full border-deep-coral/20 dark:border-electric-cyan/20 hover:bg-transparent hover:border-deep-coral/20 dark:hover:border-electric-cyan/20"
                   >
                     <Bell className="w-4 h-4 mr-2" />
-                    Set Donation Reminder
-                  </Button>
-                  <Button 
-                    onClick={() => navigate('/donate-form')}
-                    variant="outline" 
-                    className="w-full border-deep-coral/20 dark:border-electric-cyan/20 hover:bg-transparent hover:border-deep-coral/20 dark:hover:border-electric-cyan/20"
-                  >
-                    <Heart className="w-4 h-4 mr-2" />
-                    Become a Donor
+                    View All Requests
                   </Button>
                 </div>
               </div>
