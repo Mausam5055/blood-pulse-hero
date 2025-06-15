@@ -45,23 +45,43 @@ const RequestForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to submit a request",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    console.log('Submitting form with data:', formData);
+    console.log('User ID:', user.id);
 
     setLoading(true);
     try {
-      const { error } = await supabase
-        .from('requests')
-        .insert({
-          user_id: user.id,
-          name: formData.name,
-          blood_group_needed: formData.blood_group_needed,
-          location: formData.location,
-          contact_details: formData.contact_details,
-          message: formData.message,
-          status: 'active',
-        });
+      const requestData = {
+        user_id: user.id,
+        name: formData.name.trim(),
+        blood_group_needed: formData.blood_group_needed,
+        location: formData.location.trim(),
+        contact_details: formData.contact_details.trim(),
+        message: formData.message.trim() || null,
+        status: 'active',
+      };
 
-      if (error) throw error;
+      console.log('Inserting request data:', requestData);
+
+      const { data, error } = await supabase
+        .from('requests')
+        .insert(requestData)
+        .select();
+
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+
+      console.log('Request submitted successfully:', data);
 
       setSubmitted(true);
       toast({
@@ -101,10 +121,17 @@ const RequestForm = () => {
                 Your blood request has been submitted. Donors in your area will be notified.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
+              <Button 
+                onClick={() => navigate('/requests')} 
+                className="w-full bg-gradient-to-r from-neon-pink to-electric-cyan text-white"
+              >
+                View All Requests
+              </Button>
               <Button 
                 onClick={() => navigate('/dashboard')} 
-                className="w-full bg-gradient-to-r from-neon-pink to-electric-cyan text-white"
+                variant="outline" 
+                className="w-full border-white/20 text-white hover:bg-white/10"
               >
                 Go to Dashboard
               </Button>
@@ -138,18 +165,19 @@ const RequestForm = () => {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-white">Patient/Contact Name</Label>
+                  <Label htmlFor="name" className="text-white">Patient/Contact Name *</Label>
                   <Input
                     id="name"
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
                     className="bg-black/30 border-white/20 text-white"
+                    placeholder="Enter patient or contact person name"
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-white">Blood Group Needed</Label>
+                  <Label className="text-white">Blood Group Needed *</Label>
                   <Select onValueChange={(value) => handleInputChange('blood_group_needed', value)} required>
                     <SelectTrigger className="bg-black/30 border-white/20 text-white">
                       <SelectValue placeholder="Select blood group needed" />
@@ -165,7 +193,7 @@ const RequestForm = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="location" className="text-white">Location (City, State)</Label>
+                  <Label htmlFor="location" className="text-white">Location (City, State) *</Label>
                   <Input
                     id="location"
                     value={formData.location}
@@ -177,7 +205,7 @@ const RequestForm = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="contact_details" className="text-white">Contact Details</Label>
+                  <Label htmlFor="contact_details" className="text-white">Contact Details *</Label>
                   <Input
                     id="contact_details"
                     value={formData.contact_details}
@@ -201,7 +229,7 @@ const RequestForm = () => {
 
                 <Button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !formData.name || !formData.blood_group_needed || !formData.location || !formData.contact_details}
                   className="w-full bg-gradient-to-r from-neon-pink to-electric-cyan text-white py-3"
                 >
                   {loading ? 'Submitting...' : 'Submit Blood Request'}

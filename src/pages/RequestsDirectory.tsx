@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Droplets, MapPin, Phone, Calendar, Clock } from 'lucide-react';
+import { Droplets, MapPin, Phone, Calendar, Clock, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import Navbar from '../components/Navbar';
@@ -32,14 +32,30 @@ const RequestsDirectory = () => {
   const fetchRequests = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      setError(null);
+      
+      console.log('Fetching requests from Supabase...');
+      
+      const { data, error, count } = await supabase
         .from('requests')
-        .select('*')
+        .select('*', { count: 'exact' })
         .eq('status', 'active')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      console.log('Supabase response:', { data, error, count });
+
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+
+      console.log('Fetched requests:', data);
       setRequests(data || []);
+      
+      if (data && data.length === 0) {
+        console.log('No requests found in database');
+      }
+      
     } catch (error: any) {
       console.error('Error fetching requests:', error);
       setError(error.message);
@@ -92,19 +108,47 @@ const RequestsDirectory = () => {
             <p className="text-xl text-white/70 max-w-2xl mx-auto">
               Help save lives by responding to urgent blood requests in your area
             </p>
+            <div className="mt-6">
+              <Button 
+                onClick={fetchRequests}
+                variant="outline"
+                className="border-white/20 text-white hover:bg-white/10"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Refresh Requests
+              </Button>
+            </div>
           </div>
 
           {error && (
             <div className="mb-8 p-4 bg-red-900/20 border border-red-500/20 rounded-lg">
-              <p className="text-red-400">{error}</p>
+              <p className="text-red-400">Error: {error}</p>
+              <Button 
+                onClick={fetchRequests}
+                className="mt-2 bg-red-600 hover:bg-red-700"
+              >
+                Try Again
+              </Button>
             </div>
           )}
+
+          <div className="mb-4 text-center">
+            <p className="text-white/60">
+              Found {requests.length} active blood request{requests.length !== 1 ? 's' : ''}
+            </p>
+          </div>
 
           {requests.length === 0 ? (
             <div className="text-center py-16">
               <Droplets className="w-16 h-16 text-white/20 mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-white mb-2">No active blood requests</h2>
-              <p className="text-white/60">Check back later for new requests that need your help.</p>
+              <p className="text-white/60 mb-4">Check back later for new requests that need your help.</p>
+              <Button 
+                onClick={() => window.location.href = '/request-form'}
+                className="bg-gradient-to-r from-neon-pink to-electric-cyan text-white"
+              >
+                Submit a Blood Request
+              </Button>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
