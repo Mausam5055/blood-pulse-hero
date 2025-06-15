@@ -111,49 +111,86 @@ const DonateForm = () => {
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
 
-    const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
-    
-    // Upload to Supabase Storage
-    const fileName = `${user?.id}/${Date.now()}_donor_certificate.pdf`;
-    const { data, error } = await supabase.storage
-      .from('donor-pdfs')
-      .upload(fileName, pdfBlob);
+    try {
+      const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
+      
+      // Upload to Supabase Storage
+      const fileName = `${user?.id}/${Date.now()}_donor_certificate.pdf`;
+      const { data, error } = await supabase.storage
+        .from('donor-pdfs')
+        .upload(fileName, pdfBlob);
 
-    if (error) throw error;
-    
-    // Get public URL
-    const { data: { publicUrl } } = supabase.storage
-      .from('donor-pdfs')
-      .getPublicUrl(fileName);
+      if (error) {
+        console.error('Storage upload error:', error);
+        throw error;
+      }
+      
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('donor-pdfs')
+        .getPublicUrl(fileName);
 
-    return publicUrl;
+      return publicUrl;
+    } catch (error) {
+      console.error('PDF generation/upload error:', error);
+      // Return null if PDF upload fails, but don't block the donor registration
+      return '';
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to register as a donor",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    console.log('Starting donor registration...');
+    console.log('Form data:', formData);
+    console.log('User ID:', user.id);
 
     setLoading(true);
     try {
-      // Generate and upload PDF
-      const pdfUrl = await generatePDF(formData);
+      // Generate and upload PDF (non-blocking)
+      let pdfUrl = '';
+      try {
+        pdfUrl = await generatePDF(formData);
+        console.log('PDF generated and uploaded:', pdfUrl);
+      } catch (pdfError) {
+        console.warn('PDF generation failed, continuing without PDF:', pdfError);
+      }
+
+      // Prepare donor data
+      const donorData = {
+        user_id: user.id,
+        full_name: formData.full_name.trim(),
+        blood_group: formData.blood_group,
+        age: parseInt(formData.age),
+        phone_number: formData.phone_number.trim(),
+        city: formData.city.trim(),
+        state: formData.state.trim(),
+        availability: formData.availability,
+        pdf_url: pdfUrl || null,
+      };
+
+      console.log('Inserting donor data:', donorData);
 
       // Insert donor data into database
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('donors')
-        .insert({
-          user_id: user.id,
-          full_name: formData.full_name,
-          blood_group: formData.blood_group,
-          age: parseInt(formData.age),
-          phone_number: formData.phone_number,
-          city: formData.city,
-          state: formData.state,
-          availability: formData.availability,
-          pdf_url: pdfUrl,
-        });
+        .insert(donorData)
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase insertion error:', error);
+        throw error;
+      }
+
+      console.log('Donor registration successful:', data);
 
       setSubmitted(true);
       toast({
@@ -164,7 +201,7 @@ const DonateForm = () => {
       console.error('Error submitting donor form:', error);
       toast({
         title: "Error",
-        description: error.message || "Failed to register as donor",
+        description: error.message || "Failed to register as donor. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -193,12 +230,19 @@ const DonateForm = () => {
                 You've been registered as a donor. Your certificate has been generated and saved.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <Button 
                 onClick={() => navigate('/donors')} 
                 className="w-full bg-gradient-to-r from-neon-pink to-electric-cyan text-white"
               >
                 View All Donors
+              </Button>
+              <Button 
+                onClick={() => navigate('/dashboard')} 
+                variant="outline" 
+                className="w-full border-white/20 text-white hover:bg-white/10"
+              >
+                Go to Dashboard
               </Button>
             </CardContent>
           </Card>
@@ -231,18 +275,19 @@ const DonateForm = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="full_name" className="text-white">Full Name</Label>
+                    <Label htmlFor="full_name" className="text-white">Full Name *</Label>
                     <Input
                       id="full_name"
                       value={formData.full_name}
                       onChange={(e) => handleInputChange('full_name', e.target.value)}
                       className="bg-black/30 border-white/20 text-white"
+                      placeholder="Enter your full name"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-white">Blood Group</Label>
+                    <Label className="text-white">Blood Group *</Label>
                     <Select onValueChange={(value) => handleInputChange('blood_group', value)} required>
                       <SelectTrigger className="bg-black/30 border-white/20 text-white">
                         <SelectValue placeholder="Select blood group" />
@@ -258,7 +303,7 @@ const DonateForm = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="age" className="text-white">Age</Label>
+                    <Label htmlFor="age" className="text-white">Age *</Label>
                     <Input
                       id="age"
                       type="number"
@@ -267,39 +312,43 @@ const DonateForm = () => {
                       value={formData.age}
                       onChange={(e) => handleInputChange('age', e.target.value)}
                       className="bg-black/30 border-white/20 text-white"
+                      placeholder="Enter your age"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone_number" className="text-white">Phone Number</Label>
+                    <Label htmlFor="phone_number" className="text-white">Phone Number *</Label>
                     <Input
                       id="phone_number"
                       value={formData.phone_number}
                       onChange={(e) => handleInputChange('phone_number', e.target.value)}
                       className="bg-black/30 border-white/20 text-white"
+                      placeholder="Enter your phone number"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="city" className="text-white">City</Label>
+                    <Label htmlFor="city" className="text-white">City *</Label>
                     <Input
                       id="city"
                       value={formData.city}
                       onChange={(e) => handleInputChange('city', e.target.value)}
                       className="bg-black/30 border-white/20 text-white"
+                      placeholder="Enter your city"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="state" className="text-white">State</Label>
+                    <Label htmlFor="state" className="text-white">State *</Label>
                     <Input
                       id="state"
                       value={formData.state}
                       onChange={(e) => handleInputChange('state', e.target.value)}
                       className="bg-black/30 border-white/20 text-white"
+                      placeholder="Enter your state"
                       required
                     />
                   </div>
@@ -307,7 +356,7 @@ const DonateForm = () => {
 
                 <Button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !formData.full_name || !formData.blood_group || !formData.age || !formData.phone_number || !formData.city || !formData.state}
                   className="w-full bg-gradient-to-r from-neon-pink to-electric-cyan text-white py-3"
                 >
                   {loading ? 'Registering...' : 'Register as Donor'}

@@ -54,7 +54,8 @@ const RequestForm = () => {
       return;
     }
 
-    console.log('Submitting form with data:', formData);
+    console.log('Starting blood request submission...');
+    console.log('Form data:', formData);
     console.log('User ID:', user.id);
 
     setLoading(true);
@@ -77,7 +78,7 @@ const RequestForm = () => {
         .select();
 
       if (error) {
-        console.error('Supabase error:', error);
+        console.error('Supabase insertion error:', error);
         throw error;
       }
 
@@ -92,7 +93,7 @@ const RequestForm = () => {
       console.error('Error submitting request:', error);
       toast({
         title: "Error",
-        description: error.message || "Failed to submit blood request",
+        description: error.message || "Failed to submit blood request. Please try again.",
         variant: "destructive",
       });
     } finally {
