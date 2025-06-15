@@ -34,38 +34,66 @@ const RequestsDirectory = () => {
       setLoading(true);
       setError(null);
       
-      console.log('Fetching requests from Supabase...');
+      console.log('=== FETCHING BLOOD REQUESTS ===');
       
+      // Test database connection first
+      const { data: testData, error: testError } = await supabase
+        .from('requests')
+        .select('count', { count: 'exact', head: true });
+
+      if (testError) {
+        console.error('Database connection test failed:', testError);
+        throw new Error(`Database connection failed: ${testError.message}`);
+      }
+
+      console.log('Database connection successful. Total request count:', testData);
+
+      // Fetch all requests (not just active ones) to debug
       const { data, error, count } = await supabase
         .from('requests')
         .select('*', { count: 'exact' })
-        .eq('status', 'active')
         .order('created_at', { ascending: false });
 
-      console.log('Supabase response:', { data, error, count });
+      console.log('Raw Supabase response:', { data, error, count });
 
       if (error) {
         console.error('Supabase error:', error);
+        console.error('Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
         throw error;
       }
 
-      console.log('Fetched requests:', data);
-      setRequests(data || []);
+      console.log('All requests from database:', data);
+      
+      // Filter active requests
+      const activeRequests = data?.filter(req => req.status === 'active') || [];
+      console.log('Active requests:', activeRequests);
+      
+      setRequests(activeRequests);
       
       if (data && data.length === 0) {
         console.log('No requests found in database');
+      } else if (activeRequests.length === 0 && data && data.length > 0) {
+        console.log('Requests exist but none are active:', data);
       }
       
     } catch (error: any) {
-      console.error('Error fetching requests:', error);
+      console.error('=== ERROR FETCHING REQUESTS ===');
+      console.error('Error:', error);
+      console.error('Error message:', error.message);
       setError(error.message);
       toast({
         title: "Error",
-        description: "Failed to load blood requests",
+        description: "Failed to load blood requests: " + error.message,
         variant: "destructive",
       });
     } finally {
       setLoading(false);
+      console.log('=== FETCH REQUESTS COMPLETE ===');
     }
   };
 

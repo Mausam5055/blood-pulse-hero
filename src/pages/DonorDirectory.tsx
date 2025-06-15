@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Heart, Download, MapPin, Phone, Calendar, User } from 'lucide-react';
+import { Heart, Download, MapPin, Phone, Calendar, User, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import Navbar from '../components/Navbar';
@@ -34,23 +34,60 @@ const DonorDirectory = () => {
   const fetchDonors = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      setError(null);
+      
+      console.log('=== FETCHING DONORS ===');
+      
+      // Test database connection first
+      const { data: testData, error: testError } = await supabase
         .from('donors')
-        .select('*')
+        .select('count', { count: 'exact', head: true });
+
+      if (testError) {
+        console.error('Database connection test failed:', testError);
+        throw new Error(`Database connection failed: ${testError.message}`);
+      }
+
+      console.log('Database connection successful. Total donor count:', testData);
+      
+      const { data, error, count } = await supabase
+        .from('donors')
+        .select('*', { count: 'exact' })
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      console.log('Raw Supabase response:', { data, error, count });
+
+      if (error) {
+        console.error('Supabase error:', error);
+        console.error('Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
+        throw error;
+      }
+
+      console.log('All donors from database:', data);
       setDonors(data || []);
+      
+      if (data && data.length === 0) {
+        console.log('No donors found in database');
+      }
+      
     } catch (error: any) {
-      console.error('Error fetching donors:', error);
+      console.error('=== ERROR FETCHING DONORS ===');
+      console.error('Error:', error);
+      console.error('Error message:', error.message);
       setError(error.message);
       toast({
         title: "Error",
-        description: "Failed to load donors",
+        description: "Failed to load donors: " + error.message,
         variant: "destructive",
       });
     } finally {
       setLoading(false);
+      console.log('=== FETCH DONORS COMPLETE ===');
     }
   };
 
@@ -93,13 +130,35 @@ const DonorDirectory = () => {
             <p className="text-xl text-white/70 max-w-2xl mx-auto">
               Connect with verified blood donors in your area
             </p>
+            <div className="mt-6">
+              <Button 
+                onClick={fetchDonors}
+                variant="outline"
+                className="border-white/20 text-white hover:bg-white/10"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Refresh Donors
+              </Button>
+            </div>
           </div>
 
           {error && (
             <div className="mb-8 p-4 bg-red-900/20 border border-red-500/20 rounded-lg">
-              <p className="text-red-400">{error}</p>
+              <p className="text-red-400">Error: {error}</p>
+              <Button 
+                onClick={fetchDonors}
+                className="mt-2 bg-red-600 hover:bg-red-700"
+              >
+                Try Again
+              </Button>
             </div>
           )}
+
+          <div className="mb-4 text-center">
+            <p className="text-white/60">
+              Found {donors.length} registered donor{donors.length !== 1 ? 's' : ''}
+            </p>
+          </div>
 
           {donors.length === 0 ? (
             <div className="text-center py-16">
@@ -107,7 +166,7 @@ const DonorDirectory = () => {
               <h2 className="text-2xl font-bold text-white mb-2">No donors currently available</h2>
               <p className="text-white/60 mb-8">Be the first to register as a donor and help save lives!</p>
               <Button 
-                onClick={() => window.location.href = '/register'}
+                onClick={() => window.location.href = '/donate-form'}
                 className="bg-gradient-to-r from-neon-pink to-electric-cyan text-white"
               >
                 Become a Donor

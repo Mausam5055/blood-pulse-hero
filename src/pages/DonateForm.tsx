@@ -1,17 +1,17 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Heart, Download, CheckCircle } from 'lucide-react';
+import { Heart, CheckCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import html2pdf from 'html2pdf.js';
 import Navbar from '../components/Navbar';
+import { Download } from 'lucide-react';
 
 interface DonorFormData {
   full_name: string;
@@ -40,7 +40,9 @@ const DonateForm = () => {
   });
 
   React.useEffect(() => {
+    console.log('DonateForm - Current user:', user);
     if (!user) {
+      console.log('DonateForm - No user found, redirecting to auth');
       navigate('/auth');
     }
   }, [user, navigate]);
@@ -141,6 +143,7 @@ const DonateForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
+      console.error('No user found for donor submission');
       toast({
         title: "Error",
         description: "You must be logged in to register as a donor",
@@ -149,12 +152,23 @@ const DonateForm = () => {
       return;
     }
 
-    console.log('Starting donor registration...');
+    console.log('=== DONOR FORM SUBMISSION START ===');
+    console.log('User:', user);
     console.log('Form data:', formData);
-    console.log('User ID:', user.id);
 
     setLoading(true);
     try {
+      // Validate required fields
+      if (!formData.full_name.trim() || !formData.blood_group || !formData.age || !formData.phone_number.trim() || !formData.city.trim() || !formData.state.trim()) {
+        throw new Error('Please fill in all required fields');
+      }
+
+      // Check if age is valid
+      const ageNum = parseInt(formData.age);
+      if (isNaN(ageNum) || ageNum < 18 || ageNum > 65) {
+        throw new Error('Age must be between 18 and 65');
+      }
+
       // Generate and upload PDF (non-blocking)
       let pdfUrl = '';
       try {
@@ -169,7 +183,7 @@ const DonateForm = () => {
         user_id: user.id,
         full_name: formData.full_name.trim(),
         blood_group: formData.blood_group,
-        age: parseInt(formData.age),
+        age: ageNum,
         phone_number: formData.phone_number.trim(),
         city: formData.city.trim(),
         state: formData.state.trim(),
@@ -179,6 +193,18 @@ const DonateForm = () => {
 
       console.log('Inserting donor data:', donorData);
 
+      // Test database connection first
+      const { data: testData, error: testError } = await supabase
+        .from('donors')
+        .select('count', { count: 'exact', head: true });
+
+      if (testError) {
+        console.error('Database connection test failed:', testError);
+        throw new Error(`Database connection failed: ${testError.message}`);
+      }
+
+      console.log('Database connection successful. Current donor count:', testData);
+
       // Insert donor data into database
       const { data, error } = await supabase
         .from('donors')
@@ -187,10 +213,30 @@ const DonateForm = () => {
 
       if (error) {
         console.error('Supabase insertion error:', error);
+        console.error('Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
         throw error;
       }
 
       console.log('Donor registration successful:', data);
+
+      // Verify the insertion by checking if the record exists
+      const { data: verifyData, error: verifyError } = await supabase
+        .from('donors')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (verifyError) {
+        console.error('Verification query failed:', verifyError);
+      } else {
+        console.log('Verification: Found donor record:', verifyData);
+      }
 
       setSubmitted(true);
       toast({
@@ -198,14 +244,19 @@ const DonateForm = () => {
         description: "You've been registered as a donor successfully.",
       });
     } catch (error: any) {
-      console.error('Error submitting donor form:', error);
+      console.error('=== DONOR SUBMISSION ERROR ===');
+      console.error('Error:', error);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+      
       toast({
-        title: "Error",
+        title: "Registration Failed",
         description: error.message || "Failed to register as donor. Please try again.",
         variant: "destructive",
       });
     } finally {
       setLoading(false);
+      console.log('=== DONOR FORM SUBMISSION END ===');
     }
   };
 
@@ -213,7 +264,24 @@ const DonateForm = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-black">
+        <Navbar />
+        <div className="pt-20 pb-16 px-4 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-xl text-white">Please log in to register as a donor.</p>
+            <Button 
+              onClick={() => navigate('/auth')}
+              className="mt-4 bg-gradient-to-r from-neon-pink to-electric-cyan text-white"
+            >
+              Go to Login
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (submitted) {
     return (

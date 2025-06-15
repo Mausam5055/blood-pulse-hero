@@ -36,7 +36,9 @@ const RequestForm = () => {
   });
 
   React.useEffect(() => {
+    console.log('RequestForm - Current user:', user);
     if (!user) {
+      console.log('RequestForm - No user found, redirecting to auth');
       navigate('/auth');
     }
   }, [user, navigate]);
@@ -46,6 +48,7 @@ const RequestForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
+      console.error('No user found for request submission');
       toast({
         title: "Error",
         description: "You must be logged in to submit a request",
@@ -54,12 +57,17 @@ const RequestForm = () => {
       return;
     }
 
-    console.log('Starting blood request submission...');
+    console.log('=== BLOOD REQUEST SUBMISSION START ===');
+    console.log('User:', user);
     console.log('Form data:', formData);
-    console.log('User ID:', user.id);
 
     setLoading(true);
     try {
+      // Validate required fields
+      if (!formData.name.trim() || !formData.blood_group_needed || !formData.location.trim() || !formData.contact_details.trim()) {
+        throw new Error('Please fill in all required fields');
+      }
+
       const requestData = {
         user_id: user.id,
         name: formData.name.trim(),
@@ -72,6 +80,18 @@ const RequestForm = () => {
 
       console.log('Inserting request data:', requestData);
 
+      // Test database connection first
+      const { data: testData, error: testError } = await supabase
+        .from('requests')
+        .select('count', { count: 'exact', head: true });
+
+      if (testError) {
+        console.error('Database connection test failed:', testError);
+        throw new Error(`Database connection failed: ${testError.message}`);
+      }
+
+      console.log('Database connection successful. Current request count:', testData);
+
       const { data, error } = await supabase
         .from('requests')
         .insert(requestData)
@@ -79,10 +99,30 @@ const RequestForm = () => {
 
       if (error) {
         console.error('Supabase insertion error:', error);
+        console.error('Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
         throw error;
       }
 
       console.log('Request submitted successfully:', data);
+
+      // Verify the insertion by checking if the record exists
+      const { data: verifyData, error: verifyError } = await supabase
+        .from('requests')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (verifyError) {
+        console.error('Verification query failed:', verifyError);
+      } else {
+        console.log('Verification: Found request record:', verifyData);
+      }
 
       setSubmitted(true);
       toast({
@@ -90,14 +130,19 @@ const RequestForm = () => {
         description: "Your blood request has been submitted successfully.",
       });
     } catch (error: any) {
-      console.error('Error submitting request:', error);
+      console.error('=== REQUEST SUBMISSION ERROR ===');
+      console.error('Error:', error);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+      
       toast({
-        title: "Error",
+        title: "Submission Failed",
         description: error.message || "Failed to submit blood request. Please try again.",
         variant: "destructive",
       });
     } finally {
       setLoading(false);
+      console.log('=== BLOOD REQUEST SUBMISSION END ===');
     }
   };
 
@@ -105,7 +150,24 @@ const RequestForm = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-black">
+        <Navbar />
+        <div className="pt-20 pb-16 px-4 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-xl text-white">Please log in to submit a blood request.</p>
+            <Button 
+              onClick={() => navigate('/auth')}
+              className="mt-4 bg-gradient-to-r from-neon-pink to-electric-cyan text-white"
+            >
+              Go to Login
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (submitted) {
     return (
