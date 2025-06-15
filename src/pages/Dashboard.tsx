@@ -1,15 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Heart, Calendar, Award, Edit, Download, Bell, MapPin } from 'lucide-react';
+import { Heart, Calendar, Award, Edit, Download, Bell, MapPin, User, Droplets, Phone, Trash2 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+
+interface UserRequest {
+  id: string;
+  name: string;
+  blood_group_needed: string;
+  location: string;
+  contact_details: string;
+  message: string | null;
+  status: string;
+  created_at: string;
+}
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [userRequests, setUserRequests] = useState<UserRequest[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const user = {
+  const mockUser = {
     name: 'John Smith',
     bloodGroup: 'O+',
     totalDonations: 12,
@@ -30,7 +48,72 @@ const Dashboard = () => {
     { id: 2, name: 'Hospital Blood Campaign', date: '2024-01-25', location: 'Mt. Sinai Hospital' },
   ];
 
-  const daysUntilEligible = Math.ceil((new Date(user.nextEligibleDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
+  useEffect(() => {
+    if (user) {
+      fetchUserRequests();
+    }
+  }, [user]);
+
+  const fetchUserRequests = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('requests')
+        .select('*')
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setUserRequests(data || []);
+    } catch (error: any) {
+      console.error('Error fetching user requests:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load your requests",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteRequest = async (requestId: string) => {
+    try {
+      const { error } = await supabase
+        .from('requests')
+        .delete()
+        .eq('id', requestId);
+
+      if (error) throw error;
+
+      setUserRequests(prev => prev.filter(req => req.id !== requestId));
+      toast({
+        title: "Success",
+        description: "Request deleted successfully",
+      });
+    } catch (error: any) {
+      console.error('Error deleting request:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete request",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const getTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+    
+    if (diffInHours < 1) return 'Less than an hour ago';
+    if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+  };
+
+  const daysUntilEligible = Math.ceil((new Date(mockUser.nextEligibleDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
   const progressToNextDonation = Math.max(0, Math.min(100, ((56 - daysUntilEligible) / 56) * 100));
 
   return (
@@ -41,7 +124,7 @@ const Dashboard = () => {
         <div className="max-w-7xl mx-auto">
           <div className="mb-8 animate-fade-in">
             <h1 className="text-4xl font-bold text-rich-charcoal dark:text-soft-white mb-2">
-              Welcome back, {user.name}!
+              Welcome back, {mockUser.name}!
             </h1>
             <p className="text-xl text-rich-charcoal/70 dark:text-dark-text/70">
               Thank you for being a life-saving hero
@@ -50,19 +133,20 @@ const Dashboard = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-8">
+              
               <div className="glass-card p-6 rounded-2xl animate-slide-up">
                 <div className="flex items-start justify-between mb-6">
                   <div className="flex items-center space-x-4">
                     <div className="w-16 h-16 bg-gradient-to-r from-deep-coral to-soft-teal dark:from-neon-pink dark:to-electric-cyan rounded-full flex items-center justify-center text-white text-xl font-bold">
-                      {user.name.split(' ').map(n => n[0]).join('')}
+                      {mockUser.name.split(' ').map(n => n[0]).join('')}
                     </div>
                     <div>
                       <h2 className="text-2xl font-bold text-rich-charcoal dark:text-soft-white">
-                        {user.name}
+                        {mockUser.name}
                       </h2>
                       <div className="flex items-center text-rich-charcoal/60 dark:text-dark-text/60">
                         <MapPin className="w-4 h-4 mr-1" />
-                        {user.location}
+                        {mockUser.location}
                       </div>
                     </div>
                   </div>
@@ -76,7 +160,7 @@ const Dashboard = () => {
                   <div className="text-center p-4 glass rounded-xl">
                     <Heart className="w-8 h-8 mx-auto mb-2 text-deep-coral dark:text-neon-pink" fill="currentColor" />
                     <div className="text-2xl font-bold text-deep-coral dark:text-neon-pink">
-                      {user.bloodGroup}
+                      {mockUser.bloodGroup}
                     </div>
                     <div className="text-sm text-rich-charcoal/60 dark:text-dark-text/60">
                       Blood Group
@@ -85,7 +169,7 @@ const Dashboard = () => {
                   
                   <div className="text-center p-4 glass rounded-xl">
                     <div className="text-2xl font-bold text-deep-coral dark:text-neon-pink">
-                      {user.totalDonations}
+                      {mockUser.totalDonations}
                     </div>
                     <div className="text-sm text-rich-charcoal/60 dark:text-dark-text/60">
                       Total Donations
@@ -103,6 +187,7 @@ const Dashboard = () => {
                 </div>
               </div>
 
+              
               <div className="glass-card p-6 rounded-2xl animate-slide-up">
                 <h3 className="text-xl font-semibold text-rich-charcoal dark:text-soft-white mb-4">
                   Next Donation Eligibility
@@ -110,10 +195,10 @@ const Dashboard = () => {
                 <div className="space-y-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-rich-charcoal/60 dark:text-dark-text/60">
-                      Last donation: {new Date(user.lastDonation).toLocaleDateString()}
+                      Last donation: {new Date(mockUser.lastDonation).toLocaleDateString()}
                     </span>
                     <span className="text-rich-charcoal/60 dark:text-dark-text/60">
-                      Next eligible: {new Date(user.nextEligibleDate).toLocaleDateString()}
+                      Next eligible: {new Date(mockUser.nextEligibleDate).toLocaleDateString()}
                     </span>
                   </div>
                   <Progress value={progressToNextDonation} className="h-3" />
@@ -137,6 +222,85 @@ const Dashboard = () => {
                 </div>
               </div>
 
+              {/* Your Blood Requests - Updated */}
+              <div className="glass-card p-6 rounded-2xl animate-slide-up">
+                <h3 className="text-xl font-semibold text-rich-charcoal dark:text-soft-white mb-4 flex items-center">
+                  <Droplets className="w-5 h-5 mr-2 text-deep-coral dark:text-neon-pink" />
+                  Your Blood Requests
+                </h3>
+                
+                {loading ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-deep-coral dark:border-neon-pink mx-auto"></div>
+                    <p className="text-rich-charcoal/60 dark:text-dark-text/60 mt-4">Loading your requests...</p>
+                  </div>
+                ) : userRequests.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Droplets className="w-12 h-12 text-rich-charcoal/20 dark:text-dark-text/20 mx-auto mb-4" />
+                    <p className="text-rich-charcoal/60 dark:text-dark-text/60 mb-4">You haven't submitted any blood requests yet.</p>
+                    <Button 
+                      onClick={() => navigate('/request-form')}
+                      className="bg-gradient-to-r from-deep-coral to-soft-teal dark:from-neon-pink dark:to-electric-cyan text-white"
+                    >
+                      Submit a Request
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {userRequests.map((request) => (
+                      <div key={request.id} className="p-4 glass rounded-lg">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center mb-2">
+                              <h4 className="font-medium text-rich-charcoal dark:text-soft-white">{request.name}</h4>
+                              <Badge className="ml-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400">
+                                Needs {request.blood_group_needed}
+                              </Badge>
+                              <Badge 
+                                variant="secondary" 
+                                className={`ml-2 ${
+                                  request.status === 'active' 
+                                    ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' 
+                                    : 'bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-400'
+                                }`}
+                              >
+                                {request.status}
+                              </Badge>
+                            </div>
+                            <div className="text-sm text-rich-charcoal/60 dark:text-dark-text/60 space-y-1">
+                              <div className="flex items-center">
+                                <MapPin className="w-3 h-3 mr-1" />
+                                {request.location}
+                              </div>
+                              <div className="flex items-center">
+                                <Phone className="w-3 h-3 mr-1" />
+                                {request.contact_details}
+                              </div>
+                              <div className="flex items-center">
+                                <Calendar className="w-3 h-3 mr-1" />
+                                {getTimeAgo(request.created_at)}
+                              </div>
+                            </div>
+                            {request.message && (
+                              <p className="text-sm text-rich-charcoal/70 dark:text-dark-text/70 mt-2 italic">"{request.message}"</p>
+                            )}
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteRequest(request.id)}
+                            className="border-red-500/30 text-red-500 hover:bg-red-500/10 ml-4"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              
               <div className="glass-card p-6 rounded-2xl animate-slide-up">
                 <h3 className="text-xl font-semibold text-rich-charcoal dark:text-soft-white mb-4">
                   Donation History
@@ -163,7 +327,7 @@ const Dashboard = () => {
                     </div>
                   ))}
                 </div>
-                <Button variant="outline" className="w-full mt-4 border-deep-coral/20 dark:border-electric-cyan/20">
+                <Button variant="outline" className="w-full mt-4 border-deep-coral/20 dark:border-electric-cyan/20 hover:bg-transparent hover:border-deep-coral/20 dark:hover:border-electric-cyan/20">
                   View All History
                 </Button>
               </div>
@@ -171,13 +335,14 @@ const Dashboard = () => {
 
             {/* Sidebar */}
             <div className="space-y-8">
+              
               <div className="glass-card p-6 rounded-2xl animate-fade-in">
                 <h3 className="text-xl font-semibold text-rich-charcoal dark:text-soft-white mb-4 flex items-center">
                   <Award className="w-5 h-5 mr-2 text-deep-coral dark:text-neon-pink" />
                   Your Badges
                 </h3>
                 <div className="space-y-3">
-                  {user.badges.map((badge) => (
+                  {mockUser.badges.map((badge) => (
                     <div key={badge} className="flex items-center p-3 glass rounded-lg">
                       <Award className="w-8 h-8 text-pale-yellow mr-3" />
                       <div>
@@ -197,6 +362,7 @@ const Dashboard = () => {
                 </Button>
               </div>
 
+              
               <div className="glass-card p-6 rounded-2xl animate-fade-in">
                 <h3 className="text-xl font-semibold text-rich-charcoal dark:text-soft-white mb-4 flex items-center">
                   <Calendar className="w-5 h-5 mr-2 text-deep-coral dark:text-neon-pink" />
@@ -218,7 +384,7 @@ const Dashboard = () => {
                     </div>
                   ))}
                 </div>
-                <Button variant="outline" className="w-full mt-4 border-deep-coral/20 dark:border-electric-cyan/20">
+                <Button variant="outline" className="w-full mt-4 border-deep-coral/20 dark:border-electric-cyan/20 hover:bg-transparent hover:border-deep-coral/20 dark:hover:border-electric-cyan/20">
                   View All Events
                 </Button>
               </div>
