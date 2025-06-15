@@ -142,10 +142,10 @@ const UserDashboard = () => {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-warm-beige to-pale-yellow/30 dark:from-space-navy dark:to-electric-cyan/10 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
-          <Heart className="w-12 h-12 text-neon-pink animate-heartbeat mx-auto mb-4" fill="currentColor" />
-          <p className="text-xl text-rich-charcoal dark:text-soft-white">Loading your dashboard...</p>
+          <Heart className="w-12 h-12 text-neon-pink animate-pulse mx-auto mb-4" fill="currentColor" />
+          <p className="text-xl text-white">Loading your dashboard...</p>
         </div>
       </div>
     );
@@ -161,17 +161,17 @@ const UserDashboard = () => {
   const phone = user.user_metadata?.phone || 'Not provided';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-warm-beige to-pale-yellow/30 dark:from-space-navy dark:to-electric-cyan/10">
+    <div className="min-h-screen bg-black">
       <Navbar />
       
       <div className="pt-20 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8 animate-fade-in">
-            <h1 className="text-4xl font-bold text-rich-charcoal dark:text-soft-white mb-2">
+            <h1 className="text-4xl font-bold text-white mb-2">
               Welcome back, {displayName}!
             </h1>
-            <p className="text-xl text-rich-charcoal/70 dark:text-dark-text/70">
+            <p className="text-xl text-white/70">
               Thank you for being a life-saving hero
             </p>
           </div>
@@ -180,10 +180,10 @@ const UserDashboard = () => {
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-8">
               {/* Profile Overview */}
-              <div className="glass-card p-6 rounded-2xl animate-slide-up">
+              <div className="backdrop-blur-lg bg-white/5 border border-white/10 shadow-xl p-6 rounded-2xl animate-slide-up">
                 <div className="flex items-start justify-between mb-6">
                   <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-gradient-to-r from-deep-coral to-soft-teal dark:from-neon-pink dark:to-electric-cyan rounded-full flex items-center justify-center text-white text-xl font-bold">
+                    <div className="w-16 h-16 bg-gradient-to-r from-neon-pink to-electric-cyan rounded-full flex items-center justify-center text-white text-xl font-bold">
                       {profile?.avatar_url ? (
                         <img src={profile.avatar_url} alt={displayName} className="w-full h-full rounded-full object-cover" />
                       ) : (
@@ -191,11 +191,11 @@ const UserDashboard = () => {
                       )}
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold text-rich-charcoal dark:text-soft-white">
+                      <h2 className="text-2xl font-bold text-white">
                         {displayName}
                       </h2>
-                      <p className="text-rich-charcoal/60 dark:text-dark-text/60">{user.email}</p>
-                      <div className="flex items-center text-rich-charcoal/60 dark:text-dark-text/60 text-sm">
+                      <p className="text-white/60">{user.email}</p>
+                      <div className="flex items-center text-white/60 text-sm">
                         <Calendar className="w-4 h-4 mr-1" />
                         Member since {memberSince}
                       </div>
@@ -204,8 +204,8 @@ const UserDashboard = () => {
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    onClick={() => setEditing(!editing)}
-                    className="border-deep-coral/20 dark:border-electric-cyan/20"
+                    onClick={() => editing ? handleSaveProfile() : setEditing(!editing)}
+                    className="border-neon-pink/30 text-white hover:bg-neon-pink/10"
                   >
                     {editing ? <Save className="w-4 h-4 mr-2" /> : <Edit className="w-4 h-4 mr-2" />}
                     {editing ? 'Save' : 'Edit Profile'}
@@ -215,64 +215,64 @@ const UserDashboard = () => {
                 {editing ? (
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="full_name" className="text-rich-charcoal dark:text-soft-white">Full Name</Label>
+                      <Label htmlFor="full_name" className="text-white">Full Name</Label>
                       <Input
                         id="full_name"
                         name="full_name"
                         value={formData.full_name}
                         onChange={handleInputChange}
-                        className="mt-1"
+                        className="mt-1 bg-black/30 border-white/20 text-white"
                         placeholder="Enter your full name"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="avatar_url" className="text-rich-charcoal dark:text-soft-white">Avatar URL</Label>
+                      <Label htmlFor="avatar_url" className="text-white">Avatar URL</Label>
                       <Input
                         id="avatar_url"
                         name="avatar_url"
                         value={formData.avatar_url}
                         onChange={handleInputChange}
-                        className="mt-1"
+                        className="mt-1 bg-black/30 border-white/20 text-white"
                         placeholder="Enter avatar image URL"
                       />
                     </div>
                     <div className="flex space-x-2">
-                      <Button onClick={handleSaveProfile} disabled={loading}>
+                      <Button onClick={handleSaveProfile} disabled={loading} className="bg-neon-pink hover:bg-neon-pink/90">
                         <Save className="w-4 h-4 mr-2" />
                         Save Changes
                       </Button>
-                      <Button variant="outline" onClick={() => setEditing(false)}>
+                      <Button variant="outline" onClick={() => setEditing(false)} className="border-white/20 text-white">
                         Cancel
                       </Button>
                     </div>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="text-center p-4 glass rounded-xl">
-                      <Heart className="w-8 h-8 mx-auto mb-2 text-deep-coral dark:text-neon-pink" fill="currentColor" />
-                      <div className="text-2xl font-bold text-deep-coral dark:text-neon-pink">
+                    <div className="text-center p-4 backdrop-blur-md bg-white/5 border border-white/10 rounded-xl">
+                      <Heart className="w-8 h-8 mx-auto mb-2 text-neon-pink" fill="currentColor" />
+                      <div className="text-2xl font-bold text-neon-pink">
                         {bloodGroup}
                       </div>
-                      <div className="text-sm text-rich-charcoal/60 dark:text-dark-text/60">
+                      <div className="text-sm text-white/60">
                         Blood Group
                       </div>
                     </div>
                     
-                    <div className="text-center p-4 glass rounded-xl">
-                      <User className="w-8 h-8 mx-auto mb-2 text-deep-coral dark:text-neon-pink" />
-                      <div className="text-lg font-bold text-deep-coral dark:text-neon-pink">
+                    <div className="text-center p-4 backdrop-blur-md bg-white/5 border border-white/10 rounded-xl">
+                      <User className="w-8 h-8 mx-auto mb-2 text-neon-pink" />
+                      <div className="text-lg font-bold text-neon-pink">
                         Active
                       </div>
-                      <div className="text-sm text-rich-charcoal/60 dark:text-dark-text/60">
+                      <div className="text-sm text-white/60">
                         Status
                       </div>
                     </div>
                     
-                    <div className="text-center p-4 glass rounded-xl">
-                      <div className="text-lg font-bold text-deep-coral dark:text-neon-pink">
+                    <div className="text-center p-4 backdrop-blur-md bg-white/5 border border-white/10 rounded-xl">
+                      <div className="text-lg font-bold text-neon-pink">
                         {phone}
                       </div>
-                      <div className="text-sm text-rich-charcoal/60 dark:text-dark-text/60">
+                      <div className="text-sm text-white/60">
                         Phone Number
                       </div>
                     </div>
@@ -281,30 +281,30 @@ const UserDashboard = () => {
               </div>
 
               {/* Account Information */}
-              <div className="glass-card p-6 rounded-2xl animate-slide-up">
-                <h3 className="text-xl font-semibold text-rich-charcoal dark:text-soft-white mb-4">
+              <div className="backdrop-blur-lg bg-white/5 border border-white/10 shadow-xl p-6 rounded-2xl animate-slide-up">
+                <h3 className="text-xl font-semibold text-white mb-4">
                   Account Information
                 </h3>
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center p-4 glass rounded-lg">
+                  <div className="flex justify-between items-center p-4 backdrop-blur-md bg-white/5 border border-white/10 rounded-lg">
                     <div>
-                      <div className="font-medium text-rich-charcoal dark:text-soft-white">Email</div>
-                      <div className="text-sm text-rich-charcoal/60 dark:text-dark-text/60">{user.email}</div>
+                      <div className="font-medium text-white">Email</div>
+                      <div className="text-sm text-white/60">{user.email}</div>
                     </div>
-                    <Badge variant="secondary" className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
+                    <Badge variant="secondary" className="bg-green-900/30 text-green-400 border-green-400/20">
                       Verified
                     </Badge>
                   </div>
-                  <div className="flex justify-between items-center p-4 glass rounded-lg">
+                  <div className="flex justify-between items-center p-4 backdrop-blur-md bg-white/5 border border-white/10 rounded-lg">
                     <div>
-                      <div className="font-medium text-rich-charcoal dark:text-soft-white">Account Created</div>
-                      <div className="text-sm text-rich-charcoal/60 dark:text-dark-text/60">{memberSince}</div>
+                      <div className="font-medium text-white">Account Created</div>
+                      <div className="text-sm text-white/60">{memberSince}</div>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center p-4 glass rounded-lg">
+                  <div className="flex justify-between items-center p-4 backdrop-blur-md bg-white/5 border border-white/10 rounded-lg">
                     <div>
-                      <div className="font-medium text-rich-charcoal dark:text-soft-white">Last Updated</div>
-                      <div className="text-sm text-rich-charcoal/60 dark:text-dark-text/60">
+                      <div className="font-medium text-white">Last Updated</div>
+                      <div className="text-sm text-white/60">
                         {profile?.updated_at ? new Date(profile.updated_at).toLocaleDateString() : 'Never'}
                       </div>
                     </div>
@@ -316,14 +316,14 @@ const UserDashboard = () => {
             {/* Sidebar */}
             <div className="space-y-8">
               {/* Quick Actions */}
-              <div className="glass-card p-6 rounded-2xl animate-fade-in">
-                <h3 className="text-xl font-semibold text-rich-charcoal dark:text-soft-white mb-4">
+              <div className="backdrop-blur-lg bg-white/5 border border-white/10 shadow-xl p-6 rounded-2xl animate-fade-in">
+                <h3 className="text-xl font-semibold text-white mb-4">
                   Quick Actions
                 </h3>
                 <div className="space-y-3">
                   <Button 
                     onClick={() => navigate('/register')}
-                    className="w-full bg-gradient-to-r from-deep-coral to-soft-teal dark:from-neon-pink dark:to-electric-cyan text-white"
+                    className="w-full bg-gradient-to-r from-neon-pink to-electric-cyan text-white hover:opacity-90"
                   >
                     <Heart className="w-4 h-4 mr-2" />
                     Donate Blood
@@ -331,7 +331,7 @@ const UserDashboard = () => {
                   <Button 
                     onClick={() => navigate('/request')}
                     variant="outline" 
-                    className="w-full border-deep-coral/20 dark:border-electric-cyan/20"
+                    className="w-full border-neon-pink/30 text-white hover:bg-neon-pink/10"
                   >
                     <Bell className="w-4 h-4 mr-2" />
                     Request Blood
@@ -339,7 +339,7 @@ const UserDashboard = () => {
                   <Button 
                     onClick={() => navigate('/events')}
                     variant="outline" 
-                    className="w-full border-deep-coral/20 dark:border-electric-cyan/20"
+                    className="w-full border-electric-cyan/30 text-white hover:bg-electric-cyan/10"
                   >
                     <Calendar className="w-4 h-4 mr-2" />
                     View Events
@@ -348,35 +348,35 @@ const UserDashboard = () => {
               </div>
 
               {/* Profile Completion */}
-              <div className="glass-card p-6 rounded-2xl animate-fade-in">
-                <h3 className="text-xl font-semibold text-rich-charcoal dark:text-soft-white mb-4">
+              <div className="backdrop-blur-lg bg-white/5 border border-white/10 shadow-xl p-6 rounded-2xl animate-fade-in">
+                <h3 className="text-xl font-semibold text-white mb-4">
                   Profile Completion
                 </h3>
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
-                    <span className="text-rich-charcoal/60 dark:text-dark-text/60">Complete your profile</span>
-                    <span className="text-rich-charcoal/60 dark:text-dark-text/60">85%</span>
+                    <span className="text-white/60">Complete your profile</span>
+                    <span className="text-white/60">85%</span>
                   </div>
                   <Progress value={85} className="h-2" />
-                  <p className="text-sm text-rich-charcoal/60 dark:text-dark-text/60">
+                  <p className="text-sm text-white/60">
                     Add more information to help others connect with you
                   </p>
                 </div>
               </div>
 
               {/* Community Stats */}
-              <div className="glass-card p-6 rounded-2xl animate-fade-in">
-                <h3 className="text-xl font-semibold text-rich-charcoal dark:text-soft-white mb-4">
+              <div className="backdrop-blur-lg bg-white/5 border border-white/10 shadow-xl p-6 rounded-2xl animate-fade-in">
+                <h3 className="text-xl font-semibold text-white mb-4">
                   Community Impact
                 </h3>
                 <div className="space-y-4">
-                  <div className="text-center p-3 glass rounded-lg">
-                    <div className="text-2xl font-bold text-deep-coral dark:text-neon-pink">25,000+</div>
-                    <div className="text-sm text-rich-charcoal/60 dark:text-dark-text/60">Lives Saved</div>
+                  <div className="text-center p-3 backdrop-blur-md bg-white/5 border border-white/10 rounded-lg">
+                    <div className="text-2xl font-bold text-neon-pink">25,000+</div>
+                    <div className="text-sm text-white/60">Lives Saved</div>
                   </div>
-                  <div className="text-center p-3 glass rounded-lg">
-                    <div className="text-2xl font-bold text-deep-coral dark:text-neon-pink">15,000+</div>
-                    <div className="text-sm text-rich-charcoal/60 dark:text-dark-text/60">Active Donors</div>
+                  <div className="text-center p-3 backdrop-blur-md bg-white/5 border border-white/10 rounded-lg">
+                    <div className="text-2xl font-bold text-electric-cyan">15,000+</div>
+                    <div className="text-sm text-white/60">Active Donors</div>
                   </div>
                 </div>
               </div>

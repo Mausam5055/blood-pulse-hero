@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Heart, Droplets, LogIn, UserPlus } from 'lucide-react';
+import { Heart, Droplets } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 
@@ -44,7 +44,7 @@ const Hero = () => {
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-8">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12">
             <Button 
               size="lg" 
               onClick={() => navigate('/register')}
@@ -62,27 +62,6 @@ const Hero = () => {
             >
               <Droplets className="w-5 h-5 mr-2" />
               Request Blood
-            </Button>
-          </div>
-
-          {/* Auth Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <Button 
-              variant="ghost"
-              onClick={() => navigate('/auth?mode=login')}
-              className="text-white/80 hover:text-white hover:bg-white/10 px-6 py-2 rounded-full transition-all duration-300"
-            >
-              <LogIn className="w-4 h-4 mr-2" />
-              Sign In
-            </Button>
-            <span className="text-white/60">or</span>
-            <Button 
-              variant="ghost"
-              onClick={() => navigate('/auth?mode=signup')}
-              className="text-white/80 hover:text-white hover:bg-white/10 px-6 py-2 rounded-full transition-all duration-300"
-            >
-              <UserPlus className="w-4 h-4 mr-2" />
-              Create Account
             </Button>
           </div>
 

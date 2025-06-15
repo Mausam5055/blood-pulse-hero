@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -117,7 +118,7 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen flex bg-black">
-      {/* Left Side - Hero Image (Desktop) */}
+      {/* Left Side - Hero Image (Desktop Only) */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <div className="absolute inset-0">
           <img
@@ -139,7 +140,7 @@ const Auth = () => {
         {/* Hero Content */}
         <div className="relative z-10 flex flex-col justify-center p-12 text-white">
           <div className="mb-8">
-            <Heart className="w-16 h-16 text-red-500 mb-6 animate-heartbeat" fill="currentColor" />
+            <Heart className="w-16 h-16 text-red-500 mb-6 animate-pulse" fill="currentColor" />
             <h1 className="text-5xl font-bold mb-4 leading-tight">
               Join the <span className="text-red-500">Lifeline</span>
             </h1>
@@ -162,41 +163,31 @@ const Auth = () => {
         </div>
       </div>
 
-      {/* Right Side - Full Width Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center bg-black relative">
-        {/* Mobile Hero Banner */}
-        <div className="lg:hidden absolute top-0 left-0 right-0 h-48 overflow-hidden">
-          <img
-            src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-            alt="Blood donation"
-            className="w-full h-full object-cover opacity-30"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black" />
+      {/* Right Side - Full Width Form (Mobile: Full Screen) */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center bg-black relative min-h-screen">
+        {/* Mobile Logo/Header */}
+        <div className="lg:hidden absolute top-8 left-0 right-0 text-center z-10">
+          <Heart className="w-12 h-12 text-neon-pink mx-auto mb-4 animate-pulse" fill="currentColor" />
+          <h1 className="text-2xl font-bold text-white">LifeGiver</h1>
         </div>
 
-        <div className="w-full h-full flex items-center justify-center p-8 lg:p-16 relative z-10 mt-32 lg:mt-0">
-          {/* Logo for Mobile */}
-          <div className="text-center mb-8 lg:hidden">
-            <Heart className="w-12 h-12 text-red-500 mx-auto mb-4 animate-heartbeat" fill="currentColor" />
-            <h1 className="text-2xl font-bold text-white">Join the Lifeline</h1>
-          </div>
-
-          <Card className="w-full max-w-lg bg-gray-900/90 border-red-500/20 shadow-2xl animate-scale-in">
+        <div className="w-full h-full flex items-center justify-center p-4 lg:p-16 relative z-10">
+          <Card className="w-full max-w-lg bg-white/5 border-white/10 shadow-2xl backdrop-blur-lg animate-scale-in">
             <CardHeader className="text-center pb-6">
               <CardTitle className="text-3xl font-bold text-white flex items-center justify-center gap-3">
                 {isLogin ? (
                   <>
-                    <Shield className="w-8 h-8 text-red-500" />
+                    <Shield className="w-8 h-8 text-neon-pink" />
                     Welcome Back
                   </>
                 ) : (
                   <>
-                    <Users className="w-8 h-8 text-red-500" />
+                    <Users className="w-8 h-8 text-neon-pink" />
                     Create Account
                   </>
                 )}
               </CardTitle>
-              <CardDescription className="text-gray-400 text-lg">
+              <CardDescription className="text-white/70 text-lg">
                 {isLogin 
                   ? "Sign in to access your donor dashboard" 
                   : "Join thousands of heroes saving lives"
@@ -216,7 +207,7 @@ const Auth = () => {
                         type="text"
                         value={formData.fullName}
                         onChange={handleInputChange}
-                        className="bg-black/50 border-red-500/30 text-white placeholder:text-gray-500 focus:border-red-500 h-12 text-lg"
+                        className="bg-black/30 border-white/20 text-white placeholder:text-white/50 focus:border-neon-pink h-12 text-lg"
                         placeholder="Enter your full name"
                         required={!isLogin}
                       />
@@ -230,7 +221,7 @@ const Auth = () => {
                           name="bloodGroup"
                           value={formData.bloodGroup}
                           onChange={handleInputChange}
-                          className="w-full h-12 px-4 bg-black/50 border border-red-500/30 rounded-md text-white focus:border-red-500 focus:outline-none text-lg"
+                          className="w-full h-12 px-4 bg-black/30 border border-white/20 rounded-md text-white focus:border-neon-pink focus:outline-none text-lg"
                           required={!isLogin}
                         >
                           <option value="">Select</option>
@@ -252,7 +243,7 @@ const Auth = () => {
                           type="tel"
                           value={formData.phone}
                           onChange={handleInputChange}
-                          className="bg-black/50 border-red-500/30 text-white placeholder:text-gray-500 focus:border-red-500 h-12 text-lg"
+                          className="bg-black/30 border-white/20 text-white placeholder:text-white/50 focus:border-neon-pink h-12 text-lg"
                           placeholder="Phone number"
                           required={!isLogin}
                         />
@@ -269,7 +260,7 @@ const Auth = () => {
                     type="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="bg-black/50 border-red-500/30 text-white placeholder:text-gray-500 focus:border-red-500 h-12 text-lg"
+                    className="bg-black/30 border-white/20 text-white placeholder:text-white/50 focus:border-neon-pink h-12 text-lg"
                     placeholder="Enter your email"
                     required
                   />
@@ -284,14 +275,14 @@ const Auth = () => {
                       type={showPassword ? "text" : "password"}
                       value={formData.password}
                       onChange={handleInputChange}
-                      className="bg-black/50 border-red-500/30 text-white placeholder:text-gray-500 focus:border-red-500 pr-12 h-12 text-lg"
+                      className="bg-black/30 border-white/20 text-white placeholder:text-white/50 focus:border-neon-pink pr-12 h-12 text-lg"
                       placeholder="Enter your password"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors"
                     >
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
@@ -307,7 +298,7 @@ const Auth = () => {
                       type="password"
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
-                      className="bg-black/50 border-red-500/30 text-white placeholder:text-gray-500 focus:border-red-500 h-12 text-lg"
+                      className="bg-black/30 border-white/20 text-white placeholder:text-white/50 focus:border-neon-pink h-12 text-lg"
                       placeholder="Confirm your password"
                       required={!isLogin}
                     />
@@ -316,11 +307,11 @@ const Auth = () => {
 
                 {isLogin && (
                   <div className="flex items-center justify-between text-base">
-                    <label className="flex items-center text-gray-400">
+                    <label className="flex items-center text-white/70">
                       <input type="checkbox" className="mr-3 rounded" />
                       Remember me
                     </label>
-                    <a href="#" className="text-red-500 hover:text-red-400 transition-colors">
+                    <a href="#" className="text-neon-pink hover:text-neon-pink/80 transition-colors">
                       Forgot password?
                     </a>
                   </div>
@@ -329,7 +320,7 @@ const Auth = () => {
                 <Button 
                   type="submit" 
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-red-600 to-red-500 text-white font-semibold py-4 rounded-lg hover:scale-105 transition-all duration-300 text-lg disabled:opacity-50"
+                  className="w-full bg-gradient-to-r from-neon-pink to-electric-cyan text-white font-semibold py-4 rounded-lg hover:opacity-90 transition-all duration-300 text-lg disabled:opacity-50"
                 >
                   <Droplets className="w-5 h-5 mr-3" />
                   {loading ? 'Loading...' : (isLogin ? 'Sign In' : 'Create Account')}
@@ -337,17 +328,17 @@ const Auth = () => {
 
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-red-500/20" />
+                    <span className="w-full border-t border-white/20" />
                   </div>
                   <div className="relative flex justify-center text-sm uppercase">
-                    <span className="bg-black px-4 text-gray-400">Or continue with</span>
+                    <span className="bg-black px-4 text-white/50">Or continue with</span>
                   </div>
                 </div>
 
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-full border-red-500/30 text-white hover:bg-red-500/10 py-4 text-lg"
+                  className="w-full border-white/20 text-white hover:bg-white/5 py-4 text-lg backdrop-blur-sm"
                 >
                   <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
                     <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -360,11 +351,11 @@ const Auth = () => {
               </form>
 
               <div className="text-center pt-6">
-                <p className="text-gray-400 text-lg">
+                <p className="text-white/70 text-lg">
                   {isLogin ? "Don't have an account?" : "Already have an account?"}
                   <button
                     onClick={() => setIsLogin(!isLogin)}
-                    className="text-red-500 hover:text-red-400 ml-2 font-medium transition-colors"
+                    className="text-neon-pink hover:text-neon-pink/80 ml-2 font-medium transition-colors"
                   >
                     {isLogin ? 'Sign up' : 'Sign in'}
                   </button>
@@ -372,7 +363,7 @@ const Auth = () => {
               </div>
 
               <div className="text-center pt-4">
-                <Link to="/" className="text-gray-500 hover:text-white text-lg transition-colors">
+                <Link to="/" className="text-white/50 hover:text-white text-lg transition-colors">
                   ← Back to Home
                 </Link>
               </div>
