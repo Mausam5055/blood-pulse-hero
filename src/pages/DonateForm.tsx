@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Heart, CheckCircle, User, Phone, MapPin, Calendar, Droplets } from 'lucide-react';
+import { Heart, CheckCircle, User, Phone, MapPin, Calendar, Droplets, Mail, Weight, Ruler, Activity } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -14,11 +15,18 @@ import Navbar from '../components/Navbar';
 
 interface DonorFormData {
   full_name: string;
+  email: string;
   blood_group: string;
   age: string;
   phone_number: string;
+  address: string;
   city: string;
   state: string;
+  last_donation_date: string;
+  medical_conditions: string;
+  emergency_contact: string;
+  weight: string;
+  height: string;
   availability: boolean;
 }
 
@@ -30,11 +38,18 @@ const DonateForm = () => {
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState<DonorFormData>({
     full_name: '',
+    email: '',
     blood_group: '',
     age: '',
     phone_number: '',
+    address: '',
     city: '',
     state: '',
+    last_donation_date: '',
+    medical_conditions: '',
+    emergency_contact: '',
+    weight: '',
+    height: '',
     availability: true,
   });
 
@@ -76,10 +91,16 @@ const DonateForm = () => {
             <div style="margin-bottom: 15px;">
               <strong>Phone:</strong> ${donorData.phone_number}
             </div>
+            <div style="margin-bottom: 15px;">
+              <strong>Email:</strong> ${donorData.email}
+            </div>
           </div>
           
           <div>
             <h3 style="color: #e91e63; border-bottom: 2px solid #e91e63; padding-bottom: 10px; margin-bottom: 20px;">Location Details</h3>
+            <div style="margin-bottom: 15px;">
+              <strong>Address:</strong> ${donorData.address}
+            </div>
             <div style="margin-bottom: 15px;">
               <strong>City:</strong> ${donorData.city}
             </div>
@@ -115,7 +136,6 @@ const DonateForm = () => {
     try {
       const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
       
-      // Upload to Supabase Storage
       const fileName = `${user?.id}/${Date.now()}_donor_certificate.pdf`;
       const { data, error } = await supabase.storage
         .from('donor-pdfs')
@@ -126,7 +146,6 @@ const DonateForm = () => {
         throw error;
       }
       
-      // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('donor-pdfs')
         .getPublicUrl(fileName);
@@ -134,7 +153,6 @@ const DonateForm = () => {
       return publicUrl;
     } catch (error) {
       console.error('PDF generation/upload error:', error);
-      // Return null if PDF upload fails, but don't block the donor registration
       return '';
     }
   };
@@ -169,32 +187,6 @@ const DonateForm = () => {
         throw new Error('Age must be between 18 and 65');
       }
 
-      // Check current session status
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      console.log('Current session:', sessionData);
-      if (sessionError) {
-        console.error('Session error:', sessionError);
-        throw new Error('Authentication session error');
-      }
-
-      if (!sessionData.session) {
-        console.error('No active session found');
-        throw new Error('No active session found. Please log in again.');
-      }
-
-      // Test if we can access the donors table at all
-      console.log('Testing database access...');
-      const { data: testData, error: testError } = await supabase
-        .from('donors')
-        .select('count', { count: 'exact', head: true });
-
-      console.log('Database test result:', { testData, testError });
-      
-      if (testError) {
-        console.error('Database access test failed:', testError);
-        throw new Error(`Database access failed: ${testError.message}`);
-      }
-
       // Generate and upload PDF (non-blocking)
       let pdfUrl = '';
       try {
@@ -204,22 +196,28 @@ const DonateForm = () => {
         console.warn('PDF generation failed, continuing without PDF:', pdfError);
       }
 
-      // Prepare donor data with explicit user_id
+      // Prepare donor data with all new fields
       const donorData = {
         user_id: user.id,
         full_name: formData.full_name.trim(),
+        email: formData.email.trim() || null,
         blood_group: formData.blood_group,
         age: ageNum,
         phone_number: formData.phone_number.trim(),
+        address: formData.address.trim() || null,
         city: formData.city.trim(),
         state: formData.state.trim(),
+        last_donation_date: formData.last_donation_date || null,
+        medical_conditions: formData.medical_conditions.trim() || null,
+        emergency_contact: formData.emergency_contact.trim() || null,
+        weight: formData.weight ? parseFloat(formData.weight) : null,
+        height: formData.height ? parseFloat(formData.height) : null,
         availability: formData.availability,
         pdf_url: pdfUrl || null,
       };
 
       console.log('Final donor data to insert:', JSON.stringify(donorData, null, 2));
 
-      // Insert donor data into database
       const { data, error } = await supabase
         .from('donors')
         .insert(donorData)
@@ -229,18 +227,6 @@ const DonateForm = () => {
 
       if (error) {
         console.error('Supabase insertion error:', error);
-        console.error('Error details:', {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code
-        });
-        
-        // Check if it's an RLS policy violation
-        if (error.message.includes('row-level security') || error.message.includes('RLS') || error.code === '42501') {
-          throw new Error('Permission denied: Unable to save donor data. Please contact support.');
-        }
-        
         throw error;
       }
 
@@ -250,23 +236,6 @@ const DonateForm = () => {
       }
 
       console.log('Donor registration successful:', data);
-
-      // Verify the insertion by checking if the record exists
-      const { data: verifyData, error: verifyError } = await supabase
-        .from('donors')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(1);
-
-      console.log('Verification query result:', { verifyData, verifyError });
-
-      if (verifyError) {
-        console.error('Verification query failed:', verifyError);
-      } else {
-        console.log('Verification: Found donor record:', verifyData);
-      }
-
       setSubmitted(true);
       toast({
         title: "Success!",
@@ -275,8 +244,6 @@ const DonateForm = () => {
     } catch (error: any) {
       console.error('=== DONOR SUBMISSION ERROR ===');
       console.error('Error:', error);
-      console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
       
       toast({
         title: "Registration Failed",
@@ -399,106 +366,245 @@ const DonateForm = () => {
                 Donor Registration
               </CardTitle>
               <CardDescription className="text-dark-text/70">
-                Fill out your information to register as a blood donor
+                Fill out your complete information to register as a blood donor
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="full_name" className="text-soft-white flex items-center">
-                      <User className="w-4 h-4 mr-2 text-neon-pink" />
-                      Full Name *
-                    </Label>
-                    <Input
-                      id="full_name"
-                      value={formData.full_name}
-                      onChange={(e) => handleInputChange('full_name', e.target.value)}
-                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
-                      placeholder="Enter your full name"
-                      required
-                    />
-                  </div>
+                {/* Personal Information Section */}
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-soft-white flex items-center">
+                    <User className="w-5 h-5 mr-2 text-neon-pink" />
+                    Personal Information
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="full_name" className="text-soft-white flex items-center">
+                        <User className="w-4 h-4 mr-2 text-neon-pink" />
+                        Full Name *
+                      </Label>
+                      <Input
+                        id="full_name"
+                        value={formData.full_name}
+                        onChange={(e) => handleInputChange('full_name', e.target.value)}
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                        placeholder="Enter your full name"
+                        required
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label className="text-soft-white flex items-center">
-                      <Droplets className="w-4 h-4 mr-2 text-neon-pink" />
-                      Blood Group *
-                    </Label>
-                    <Select onValueChange={(value) => handleInputChange('blood_group', value)} required>
-                      <SelectTrigger className="glass border-electric-cyan/20 text-white">
-                        <SelectValue placeholder="Select blood group" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {bloodGroups.map((group) => (
-                          <SelectItem key={group} value={group}>
-                            {group}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="text-soft-white flex items-center">
+                        <Mail className="w-4 h-4 mr-2 text-neon-pink" />
+                        Email Address
+                      </Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                        placeholder="Enter your email address"
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="age" className="text-soft-white flex items-center">
-                      <Calendar className="w-4 h-4 mr-2 text-neon-pink" />
-                      Age *
-                    </Label>
-                    <Input
-                      id="age"
-                      type="number"
-                      min="18"
-                      max="65"
-                      value={formData.age}
-                      onChange={(e) => handleInputChange('age', e.target.value)}
-                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
-                      placeholder="Enter your age"
-                      required
-                    />
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="age" className="text-soft-white flex items-center">
+                        <Calendar className="w-4 h-4 mr-2 text-neon-pink" />
+                        Age *
+                      </Label>
+                      <Input
+                        id="age"
+                        type="number"
+                        min="18"
+                        max="65"
+                        value={formData.age}
+                        onChange={(e) => handleInputChange('age', e.target.value)}
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                        placeholder="Enter your age"
+                        required
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="phone_number" className="text-soft-white flex items-center">
-                      <Phone className="w-4 h-4 mr-2 text-neon-pink" />
-                      Phone Number *
-                    </Label>
-                    <Input
-                      id="phone_number"
-                      value={formData.phone_number}
-                      onChange={(e) => handleInputChange('phone_number', e.target.value)}
-                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
-                      placeholder="Enter your phone number"
-                      required
-                    />
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone_number" className="text-soft-white flex items-center">
+                        <Phone className="w-4 h-4 mr-2 text-neon-pink" />
+                        Phone Number *
+                      </Label>
+                      <Input
+                        id="phone_number"
+                        value={formData.phone_number}
+                        onChange={(e) => handleInputChange('phone_number', e.target.value)}
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                        placeholder="Enter your phone number"
+                        required
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="city" className="text-soft-white flex items-center">
-                      <MapPin className="w-4 h-4 mr-2 text-neon-pink" />
-                      City *
-                    </Label>
-                    <Input
-                      id="city"
-                      value={formData.city}
-                      onChange={(e) => handleInputChange('city', e.target.value)}
-                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
-                      placeholder="Enter your city"
-                      required
-                    />
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="emergency_contact" className="text-soft-white flex items-center">
+                        <Phone className="w-4 h-4 mr-2 text-neon-pink" />
+                        Emergency Contact
+                      </Label>
+                      <Input
+                        id="emergency_contact"
+                        value={formData.emergency_contact}
+                        onChange={(e) => handleInputChange('emergency_contact', e.target.value)}
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                        placeholder="Emergency contact number"
+                      />
+                    </div>
 
+                    <div className="space-y-2">
+                      <Label className="text-soft-white flex items-center">
+                        <Droplets className="w-4 h-4 mr-2 text-neon-pink" />
+                        Blood Group *
+                      </Label>
+                      <Select onValueChange={(value) => handleInputChange('blood_group', value)} required>
+                        <SelectTrigger className="glass border-electric-cyan/20 text-white">
+                          <SelectValue placeholder="Select blood group" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {bloodGroups.map((group) => (
+                            <SelectItem key={group} value={group}>
+                              {group}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Physical Information Section */}
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-soft-white flex items-center">
+                    <Activity className="w-5 h-5 mr-2 text-neon-pink" />
+                    Physical Information
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="weight" className="text-soft-white flex items-center">
+                        <Weight className="w-4 h-4 mr-2 text-neon-pink" />
+                        Weight (kg)
+                      </Label>
+                      <Input
+                        id="weight"
+                        type="number"
+                        step="0.1"
+                        min="30"
+                        max="200"
+                        value={formData.weight}
+                        onChange={(e) => handleInputChange('weight', e.target.value)}
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                        placeholder="Enter your weight"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="height" className="text-soft-white flex items-center">
+                        <Ruler className="w-4 h-4 mr-2 text-neon-pink" />
+                        Height (cm)
+                      </Label>
+                      <Input
+                        id="height"
+                        type="number"
+                        step="0.1"
+                        min="100"
+                        max="250"
+                        value={formData.height}
+                        onChange={(e) => handleInputChange('height', e.target.value)}
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                        placeholder="Enter your height"
+                      />
+                    </div>
+
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="last_donation_date" className="text-soft-white flex items-center">
+                        <Calendar className="w-4 h-4 mr-2 text-neon-pink" />
+                        Last Donation Date
+                      </Label>
+                      <Input
+                        id="last_donation_date"
+                        type="date"
+                        value={formData.last_donation_date}
+                        onChange={(e) => handleInputChange('last_donation_date', e.target.value)}
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Address Information Section */}
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-soft-white flex items-center">
+                    <MapPin className="w-5 h-5 mr-2 text-neon-pink" />
+                    Address Information
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="address" className="text-soft-white flex items-center">
+                        <MapPin className="w-4 h-4 mr-2 text-neon-pink" />
+                        Street Address
+                      </Label>
+                      <Input
+                        id="address"
+                        value={formData.address}
+                        onChange={(e) => handleInputChange('address', e.target.value)}
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                        placeholder="Enter your street address"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="city" className="text-soft-white flex items-center">
+                        <MapPin className="w-4 h-4 mr-2 text-neon-pink" />
+                        City *
+                      </Label>
+                      <Input
+                        id="city"
+                        value={formData.city}
+                        onChange={(e) => handleInputChange('city', e.target.value)}
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                        placeholder="Enter your city"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="state" className="text-soft-white flex items-center">
+                        <MapPin className="w-4 h-4 mr-2 text-neon-pink" />
+                        State *
+                      </Label>
+                      <Input
+                        id="state"
+                        value={formData.state}
+                        onChange={(e) => handleInputChange('state', e.target.value)}
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                        placeholder="Enter your state"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Medical Information Section */}
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-soft-white flex items-center">
+                    <Activity className="w-5 h-5 mr-2 text-neon-pink" />
+                    Medical Information
+                  </h3>
                   <div className="space-y-2">
-                    <Label htmlFor="state" className="text-soft-white flex items-center">
-                      <MapPin className="w-4 h-4 mr-2 text-neon-pink" />
-                      State *
+                    <Label htmlFor="medical_conditions" className="text-soft-white flex items-center">
+                      <Activity className="w-4 h-4 mr-2 text-neon-pink" />
+                      Medical Conditions (Optional)
                     </Label>
-                    <Input
-                      id="state"
-                      value={formData.state}
-                      onChange={(e) => handleInputChange('state', e.target.value)}
-                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
-                      placeholder="Enter your state"
-                      required
+                    <Textarea
+                      id="medical_conditions"
+                      value={formData.medical_conditions}
+                      onChange={(e) => handleInputChange('medical_conditions', e.target.value)}
+                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white min-h-[100px]"
+                      placeholder="List any medical conditions or medications..."
                     />
                   </div>
                 </div>

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -5,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Droplets, CheckCircle, User, Phone, MapPin, MessageSquare } from 'lucide-react';
+import { Droplets, CheckCircle, User, Phone, MapPin, MessageSquare, Calendar, Building, UserCheck, AlertTriangle, Hash } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -18,6 +19,14 @@ interface RequestFormData {
   location: string;
   contact_details: string;
   message: string;
+  patient_age: string;
+  hospital_name: string;
+  doctor_name: string;
+  urgency_level: string;
+  units_needed: string;
+  required_by_date: string;
+  medical_condition: string;
+  relation_to_patient: string;
 }
 
 const RequestForm = () => {
@@ -32,6 +41,14 @@ const RequestForm = () => {
     location: '',
     contact_details: '',
     message: '',
+    patient_age: '',
+    hospital_name: '',
+    doctor_name: '',
+    urgency_level: 'normal',
+    units_needed: '1',
+    required_by_date: '',
+    medical_condition: '',
+    relation_to_patient: '',
   });
 
   React.useEffect(() => {
@@ -43,6 +60,12 @@ const RequestForm = () => {
   }, [user, navigate]);
 
   const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  const urgencyLevels = [
+    { value: 'low', label: 'Low' },
+    { value: 'normal', label: 'Normal' },
+    { value: 'high', label: 'High' },
+    { value: 'critical', label: 'Critical' }
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,33 +91,7 @@ const RequestForm = () => {
         throw new Error('Please fill in all required fields');
       }
 
-      // Check current session status
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      console.log('Current session:', sessionData);
-      if (sessionError) {
-        console.error('Session error:', sessionError);
-        throw new Error('Authentication session error');
-      }
-
-      if (!sessionData.session) {
-        console.error('No active session found');
-        throw new Error('No active session found. Please log in again.');
-      }
-
-      // Test if we can access the requests table at all
-      console.log('Testing database access...');
-      const { data: testData, error: testError } = await supabase
-        .from('requests')
-        .select('count', { count: 'exact', head: true });
-
-      console.log('Database test result:', { testData, testError });
-      
-      if (testError) {
-        console.error('Database access test failed:', testError);
-        throw new Error(`Database access failed: ${testError.message}`);
-      }
-
-      // Prepare request data with explicit user_id
+      // Prepare request data with all new fields
       const requestData = {
         user_id: user.id,
         name: formData.name.trim(),
@@ -102,6 +99,14 @@ const RequestForm = () => {
         location: formData.location.trim(),
         contact_details: formData.contact_details.trim(),
         message: formData.message.trim() || null,
+        patient_age: formData.patient_age ? parseInt(formData.patient_age) : null,
+        hospital_name: formData.hospital_name.trim() || null,
+        doctor_name: formData.doctor_name.trim() || null,
+        urgency_level: formData.urgency_level,
+        units_needed: formData.units_needed ? parseInt(formData.units_needed) : 1,
+        required_by_date: formData.required_by_date || null,
+        medical_condition: formData.medical_condition.trim() || null,
+        relation_to_patient: formData.relation_to_patient.trim() || null,
         status: 'active',
       };
 
@@ -116,18 +121,6 @@ const RequestForm = () => {
 
       if (error) {
         console.error('Supabase insertion error:', error);
-        console.error('Error details:', {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code
-        });
-        
-        // Check if it's an RLS policy violation
-        if (error.message.includes('row-level security') || error.message.includes('RLS') || error.code === '42501') {
-          throw new Error('Permission denied: Unable to save request data. Please contact support.');
-        }
-        
         throw error;
       }
 
@@ -137,23 +130,6 @@ const RequestForm = () => {
       }
 
       console.log('Request submitted successfully:', data);
-
-      // Verify the insertion by checking if the record exists
-      const { data: verifyData, error: verifyError } = await supabase
-        .from('requests')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(1);
-
-      console.log('Verification query result:', { verifyData, verifyError });
-
-      if (verifyError) {
-        console.error('Verification query failed:', verifyError);
-      } else {
-        console.log('Verification: Found request record:', verifyData);
-      }
-
       setSubmitted(true);
       toast({
         title: "Success!",
@@ -162,8 +138,6 @@ const RequestForm = () => {
     } catch (error: any) {
       console.error('=== REQUEST SUBMISSION ERROR ===');
       console.error('Error:', error);
-      console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
       
       toast({
         title: "Submission Failed",
@@ -286,89 +260,246 @@ const RequestForm = () => {
                 Blood Request Form
               </CardTitle>
               <CardDescription className="text-dark-text/70">
-                Fill out your information to request blood from our donor network
+                Fill out complete information to request blood from our donor network
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="text-soft-white flex items-center">
-                      <User className="w-4 h-4 mr-2 text-neon-pink" />
-                      Patient/Contact Name *
-                    </Label>
-                    <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={(e) => handleInputChange('name', e.target.value)}
-                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
-                      placeholder="Enter patient or contact person name"
-                      required
-                    />
-                  </div>
+                {/* Patient Information Section */}
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-soft-white flex items-center">
+                    <User className="w-5 h-5 mr-2 text-neon-pink" />
+                    Patient Information
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="name" className="text-soft-white flex items-center">
+                        <User className="w-4 h-4 mr-2 text-neon-pink" />
+                        Patient/Contact Name *
+                      </Label>
+                      <Input
+                        id="name"
+                        value={formData.name}
+                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                        placeholder="Enter patient or contact person name"
+                        required
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label className="text-soft-white flex items-center">
-                      <Droplets className="w-4 h-4 mr-2 text-neon-pink" />
-                      Blood Group Needed *
-                    </Label>
-                    <Select onValueChange={(value) => handleInputChange('blood_group_needed', value)} required>
-                      <SelectTrigger className="glass border-electric-cyan/20 text-white">
-                        <SelectValue placeholder="Select blood group needed" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {bloodGroups.map((group) => (
-                          <SelectItem key={group} value={group}>
-                            {group}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="patient_age" className="text-soft-white flex items-center">
+                        <Calendar className="w-4 h-4 mr-2 text-neon-pink" />
+                        Patient Age
+                      </Label>
+                      <Input
+                        id="patient_age"
+                        type="number"
+                        min="1"
+                        max="120"
+                        value={formData.patient_age}
+                        onChange={(e) => handleInputChange('patient_age', e.target.value)}
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                        placeholder="Enter patient age"
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="location" className="text-soft-white flex items-center">
-                      <MapPin className="w-4 h-4 mr-2 text-neon-pink" />
-                      Location (City, State) *
-                    </Label>
-                    <Input
-                      id="location"
-                      value={formData.location}
-                      onChange={(e) => handleInputChange('location', e.target.value)}
-                      placeholder="e.g., New York, NY"
-                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
-                      required
-                    />
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="relation_to_patient" className="text-soft-white flex items-center">
+                        <UserCheck className="w-4 h-4 mr-2 text-neon-pink" />
+                        Relation to Patient
+                      </Label>
+                      <Input
+                        id="relation_to_patient"
+                        value={formData.relation_to_patient}
+                        onChange={(e) => handleInputChange('relation_to_patient', e.target.value)}
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                        placeholder="e.g., Father, Mother, Friend, Self"
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="contact_details" className="text-soft-white flex items-center">
-                      <Phone className="w-4 h-4 mr-2 text-neon-pink" />
-                      Contact Details *
-                    </Label>
-                    <Input
-                      id="contact_details"
-                      value={formData.contact_details}
-                      onChange={(e) => handleInputChange('contact_details', e.target.value)}
-                      placeholder="Phone number, email, or other contact info"
-                      className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
-                      required
-                    />
+                    <div className="space-y-2">
+                      <Label htmlFor="contact_details" className="text-soft-white flex items-center">
+                        <Phone className="w-4 h-4 mr-2 text-neon-pink" />
+                        Contact Details *
+                      </Label>
+                      <Input
+                        id="contact_details"
+                        value={formData.contact_details}
+                        onChange={(e) => handleInputChange('contact_details', e.target.value)}
+                        placeholder="Phone number, email, or other contact info"
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                        required
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="message" className="text-soft-white flex items-center">
-                    <MessageSquare className="w-4 h-4 mr-2 text-neon-pink" />
-                    Additional Message (Optional)
-                  </Label>
-                  <Textarea
-                    id="message"
-                    value={formData.message}
-                    onChange={(e) => handleInputChange('message', e.target.value)}
-                    placeholder="Any additional details about your request..."
-                    className="glass border-electric-cyan/20 focus:border-electric-cyan text-white min-h-[100px]"
-                  />
+                {/* Blood Request Details Section */}
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-soft-white flex items-center">
+                    <Droplets className="w-5 h-5 mr-2 text-neon-pink" />
+                    Blood Request Details
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label className="text-soft-white flex items-center">
+                        <Droplets className="w-4 h-4 mr-2 text-neon-pink" />
+                        Blood Group Needed *
+                      </Label>
+                      <Select onValueChange={(value) => handleInputChange('blood_group_needed', value)} required>
+                        <SelectTrigger className="glass border-electric-cyan/20 text-white">
+                          <SelectValue placeholder="Select blood group needed" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {bloodGroups.map((group) => (
+                            <SelectItem key={group} value={group}>
+                              {group}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="units_needed" className="text-soft-white flex items-center">
+                        <Hash className="w-4 h-4 mr-2 text-neon-pink" />
+                        Units Needed
+                      </Label>
+                      <Input
+                        id="units_needed"
+                        type="number"
+                        min="1"
+                        max="10"
+                        value={formData.units_needed}
+                        onChange={(e) => handleInputChange('units_needed', e.target.value)}
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                        placeholder="Number of units"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-soft-white flex items-center">
+                        <AlertTriangle className="w-4 h-4 mr-2 text-neon-pink" />
+                        Urgency Level
+                      </Label>
+                      <Select onValueChange={(value) => handleInputChange('urgency_level', value)} defaultValue="normal">
+                        <SelectTrigger className="glass border-electric-cyan/20 text-white">
+                          <SelectValue placeholder="Select urgency level" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {urgencyLevels.map((level) => (
+                            <SelectItem key={level.value} value={level.value}>
+                              {level.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="required_by_date" className="text-soft-white flex items-center">
+                        <Calendar className="w-4 h-4 mr-2 text-neon-pink" />
+                        Required By Date
+                      </Label>
+                      <Input
+                        id="required_by_date"
+                        type="date"
+                        value={formData.required_by_date}
+                        onChange={(e) => handleInputChange('required_by_date', e.target.value)}
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Hospital Information Section */}
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-soft-white flex items-center">
+                    <Building className="w-5 h-5 mr-2 text-neon-pink" />
+                    Hospital Information
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="hospital_name" className="text-soft-white flex items-center">
+                        <Building className="w-4 h-4 mr-2 text-neon-pink" />
+                        Hospital Name
+                      </Label>
+                      <Input
+                        id="hospital_name"
+                        value={formData.hospital_name}
+                        onChange={(e) => handleInputChange('hospital_name', e.target.value)}
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                        placeholder="Enter hospital name"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="doctor_name" className="text-soft-white flex items-center">
+                        <UserCheck className="w-4 h-4 mr-2 text-neon-pink" />
+                        Doctor Name
+                      </Label>
+                      <Input
+                        id="doctor_name"
+                        value={formData.doctor_name}
+                        onChange={(e) => handleInputChange('doctor_name', e.target.value)}
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                        placeholder="Enter doctor's name"
+                      />
+                    </div>
+
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="location" className="text-soft-white flex items-center">
+                        <MapPin className="w-4 h-4 mr-2 text-neon-pink" />
+                        Location (City, State) *
+                      </Label>
+                      <Input
+                        id="location"
+                        value={formData.location}
+                        onChange={(e) => handleInputChange('location', e.target.value)}
+                        placeholder="e.g., New York, NY"
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Medical Information Section */}
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-soft-white flex items-center">
+                    <MessageSquare className="w-5 h-5 mr-2 text-neon-pink" />
+                    Additional Information
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="medical_condition" className="text-soft-white flex items-center">
+                        <MessageSquare className="w-4 h-4 mr-2 text-neon-pink" />
+                        Medical Condition
+                      </Label>
+                      <Textarea
+                        id="medical_condition"
+                        value={formData.medical_condition}
+                        onChange={(e) => handleInputChange('medical_condition', e.target.value)}
+                        placeholder="Describe the medical condition requiring blood transfusion..."
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white min-h-[80px]"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="message" className="text-soft-white flex items-center">
+                        <MessageSquare className="w-4 h-4 mr-2 text-neon-pink" />
+                        Additional Message (Optional)
+                      </Label>
+                      <Textarea
+                        id="message"
+                        value={formData.message}
+                        onChange={(e) => handleInputChange('message', e.target.value)}
+                        placeholder="Any additional details about your request..."
+                        className="glass border-electric-cyan/20 focus:border-electric-cyan text-white min-h-[100px]"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <Button

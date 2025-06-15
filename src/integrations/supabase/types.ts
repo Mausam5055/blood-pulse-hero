@@ -11,46 +11,67 @@ export type Database = {
     Tables: {
       donors: {
         Row: {
+          address: string | null
           age: number
           availability: boolean | null
           blood_group: string
           city: string
           created_at: string | null
+          email: string | null
+          emergency_contact: string | null
           full_name: string
+          height: number | null
           id: string
+          last_donation_date: string | null
+          medical_conditions: string | null
           pdf_url: string | null
           phone_number: string
           state: string
           updated_at: string | null
           user_id: string
+          weight: number | null
         }
         Insert: {
+          address?: string | null
           age: number
           availability?: boolean | null
           blood_group: string
           city: string
           created_at?: string | null
+          email?: string | null
+          emergency_contact?: string | null
           full_name: string
+          height?: number | null
           id?: string
+          last_donation_date?: string | null
+          medical_conditions?: string | null
           pdf_url?: string | null
           phone_number: string
           state: string
           updated_at?: string | null
           user_id: string
+          weight?: number | null
         }
         Update: {
+          address?: string | null
           age?: number
           availability?: boolean | null
           blood_group?: string
           city?: string
           created_at?: string | null
+          email?: string | null
+          emergency_contact?: string | null
           full_name?: string
+          height?: number | null
           id?: string
+          last_donation_date?: string | null
+          medical_conditions?: string | null
           pdf_url?: string | null
           phone_number?: string
           state?: string
           updated_at?: string | null
           user_id?: string
+          weight?: number | null
         }
         Relationships: []
       }
@@ -83,36 +104,60 @@ export type Database = {
           blood_group_needed: string
           contact_details: string
           created_at: string | null
+          doctor_name: string | null
+          hospital_name: string | null
           id: string
           location: string
+          medical_condition: string | null
           message: string | null
           name: string
+          patient_age: number | null
+          relation_to_patient: string | null
+          required_by_date: string | null
           status: string | null
+          units_needed: number | null
           updated_at: string | null
+          urgency_level: string | null
           user_id: string
         }
         Insert: {
           blood_group_needed: string
           contact_details: string
           created_at?: string | null
+          doctor_name?: string | null
+          hospital_name?: string | null
           id?: string
           location: string
+          medical_condition?: string | null
           message?: string | null
           name: string
+          patient_age?: number | null
+          relation_to_patient?: string | null
+          required_by_date?: string | null
           status?: string | null
+          units_needed?: number | null
           updated_at?: string | null
+          urgency_level?: string | null
           user_id: string
         }
         Update: {
           blood_group_needed?: string
           contact_details?: string
           created_at?: string | null
+          doctor_name?: string | null
+          hospital_name?: string | null
           id?: string
           location?: string
+          medical_condition?: string | null
           message?: string | null
           name?: string
+          patient_age?: number | null
+          relation_to_patient?: string | null
+          required_by_date?: string | null
           status?: string | null
+          units_needed?: number | null
           updated_at?: string | null
+          urgency_level?: string | null
           user_id?: string
         }
         Relationships: []

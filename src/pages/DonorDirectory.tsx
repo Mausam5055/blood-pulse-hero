@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Heart, Download, MapPin, Phone, Calendar, User, RefreshCw } from 'lucide-react';
+import { Heart, Download, MapPin, Phone, Calendar, User, RefreshCw, Mail, Weight, Ruler, Activity } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import Navbar from '../components/Navbar';
@@ -11,11 +11,18 @@ import Navbar from '../components/Navbar';
 interface Donor {
   id: string;
   full_name: string;
+  email: string | null;
   blood_group: string;
   age: number;
   phone_number: string;
+  address: string | null;
   city: string;
   state: string;
+  last_donation_date: string | null;
+  medical_conditions: string | null;
+  emergency_contact: string | null;
+  weight: number | null;
+  height: number | null;
   availability: boolean;
   pdf_url: string | null;
   created_at: string;
@@ -38,18 +45,6 @@ const DonorDirectory = () => {
       
       console.log('=== FETCHING DONORS ===');
       
-      // Test database connection first
-      const { data: testData, error: testError } = await supabase
-        .from('donors')
-        .select('count', { count: 'exact', head: true });
-
-      if (testError) {
-        console.error('Database connection test failed:', testError);
-        throw new Error(`Database connection failed: ${testError.message}`);
-      }
-
-      console.log('Database connection successful. Total donor count:', testData);
-      
       const { data, error, count } = await supabase
         .from('donors')
         .select('*', { count: 'exact' })
@@ -59,26 +54,15 @@ const DonorDirectory = () => {
 
       if (error) {
         console.error('Supabase error:', error);
-        console.error('Error details:', {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code
-        });
         throw error;
       }
 
       console.log('All donors from database:', data);
       setDonors(data || []);
       
-      if (data && data.length === 0) {
-        console.log('No donors found in database');
-      }
-      
     } catch (error: any) {
       console.error('=== ERROR FETCHING DONORS ===');
       console.error('Error:', error);
-      console.error('Error message:', error.message);
       setError(error.message);
       toast({
         title: "Error",
@@ -101,6 +85,11 @@ const DonorDirectory = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return 'Not specified';
+    return new Date(dateString).toLocaleDateString();
   };
 
   if (loading) {
@@ -216,8 +205,46 @@ const DonorDirectory = () => {
                     
                     <div className="flex items-center text-white/70 text-sm">
                       <MapPin className="w-4 h-4 mr-2 text-neon-pink" />
-                      {donor.city}, {donor.state}
+                      {donor.address ? `${donor.address}, ` : ''}{donor.city}, {donor.state}
                     </div>
+
+                    {donor.email && (
+                      <div className="flex items-center text-white/70 text-sm">
+                        <Mail className="w-4 h-4 mr-2 text-neon-pink" />
+                        {donor.email}
+                      </div>
+                    )}
+
+                    {(donor.weight || donor.height) && (
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        {donor.weight && (
+                          <div className="flex items-center text-white/70">
+                            <Weight className="w-4 h-4 mr-2 text-neon-pink" />
+                            {donor.weight} kg
+                          </div>
+                        )}
+                        {donor.height && (
+                          <div className="flex items-center text-white/70">
+                            <Ruler className="w-4 h-4 mr-2 text-neon-pink" />
+                            {donor.height} cm
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {donor.last_donation_date && (
+                      <div className="flex items-center text-white/70 text-sm">
+                        <Activity className="w-4 h-4 mr-2 text-neon-pink" />
+                        Last donation: {formatDate(donor.last_donation_date)}
+                      </div>
+                    )}
+
+                    {donor.medical_conditions && (
+                      <div className="text-white/60 text-sm bg-white/5 p-2 rounded">
+                        <p className="font-medium mb-1">Medical conditions:</p>
+                        <p className="text-xs">{donor.medical_conditions}</p>
+                      </div>
+                    )}
 
                     <div className="flex gap-2 pt-4">
                       <Button 
