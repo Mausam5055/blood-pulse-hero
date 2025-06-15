@@ -1,283 +1,190 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Search, Filter, MapPin, Phone, Mail, Heart, Award } from 'lucide-react';
+import { Heart, Download, MapPin, Phone, Calendar, User } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import Navbar from '../components/Navbar';
 
+interface Donor {
+  id: string;
+  full_name: string;
+  blood_group: string;
+  age: number;
+  phone_number: string;
+  city: string;
+  state: string;
+  availability: boolean;
+  pdf_url: string | null;
+  created_at: string;
+}
+
 const DonorDirectory = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedBloodGroup, setSelectedBloodGroup] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState('');
+  const [donors, setDonors] = useState<Donor[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
 
-  const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  useEffect(() => {
+    fetchDonors();
+  }, []);
 
-  // Mock donor data - this would come from registered users
-  const donors = [
-    {
-      id: 1,
-      name: 'John Smith',
-      bloodGroup: 'O+',
-      location: 'New York, NY',
-      lastDonation: '2 months ago',
-      totalDonations: 12,
-      isAvailable: true,
-      badges: ['Gold Donor', 'Regular'],
-      phone: '+1 (555) 123-4567',
-      email: 'john.smith@email.com',
-      profilePhoto: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-    },
-    {
-      id: 2,
-      name: 'Sarah Johnson',
-      bloodGroup: 'A+',
-      location: 'Los Angeles, CA',
-      lastDonation: '1 month ago',
-      totalDonations: 8,
-      isAvailable: true,
-      badges: ['Silver Donor'],
-      phone: '+1 (555) 987-6543',
-      email: 'sarah.j@email.com',
-      profilePhoto: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
-    },
-    {
-      id: 3,
-      name: 'Mike Davis',
-      bloodGroup: 'B-',
-      location: 'Chicago, IL',
-      lastDonation: '3 weeks ago',
-      totalDonations: 15,
-      isAvailable: false,
-      badges: ['Platinum Donor', 'Hero'],
-      phone: '+1 (555) 456-7890',
-      email: 'mike.davis@email.com',
-      profilePhoto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-    },
-  ];
+  const fetchDonors = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('donors')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-  const filteredDonors = donors.filter(donor => {
-    const matchesSearch = donor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         donor.location.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesBloodGroup = !selectedBloodGroup || donor.bloodGroup === selectedBloodGroup;
-    const matchesLocation = !selectedLocation || donor.location.includes(selectedLocation);
-    
-    return matchesSearch && matchesBloodGroup && matchesLocation;
-  });
+      if (error) throw error;
+      setDonors(data || []);
+    } catch (error: any) {
+      console.error('Error fetching donors:', error);
+      setError(error.message);
+      toast({
+        title: "Error",
+        description: "Failed to load donors",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDownloadPDF = (pdfUrl: string, donorName: string) => {
+    if (pdfUrl) {
+      window.open(pdfUrl, '_blank');
+    } else {
+      toast({
+        title: "Error",
+        description: "PDF not available for this donor",
+        variant: "destructive",
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black">
+        <Navbar />
+        <div className="pt-20 pb-16 px-4 flex items-center justify-center">
+          <div className="text-center">
+            <Heart className="w-12 h-12 text-neon-pink animate-pulse mx-auto mb-4" fill="currentColor" />
+            <p className="text-xl text-white">Loading donors...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="absolute inset-0 z-0">
-        <img
-          src="https://images.unsplash.com/photo-1559757175-0eb30cd8c063?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
-          alt="Donors background"
-          className="w-full h-full object-cover opacity-30"
-        />
-        <div className="absolute inset-0 bg-background/80" />
-      </div>
-
+    <div className="min-h-screen bg-black">
       <Navbar />
-      
-      <div className="relative z-10 pt-20 pb-16 px-4 sm:px-6 lg:px-8">
+      <div className="pt-20 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-12 animate-fade-in">
-            <h1 className="text-4xl md:text-5xl font-bold text-soft-white mb-4">
-              Find Blood Donors
-            </h1>
-            <p className="text-xl text-dark-text/70">
-              Connect with verified donors in your area
+          <div className="text-center mb-12">
+            <div className="w-20 h-20 bg-gradient-to-r from-neon-pink to-electric-cyan rounded-full flex items-center justify-center mx-auto mb-6">
+              <Heart className="w-10 h-10 text-white" fill="currentColor" />
+            </div>
+            <h1 className="text-5xl font-bold text-white mb-4">Blood Donors</h1>
+            <p className="text-xl text-white/70 max-w-2xl mx-auto">
+              Connect with verified blood donors in your area
             </p>
           </div>
 
-          {/* Filters */}
-          <div className="glass-card p-6 rounded-2xl mb-8 animate-slide-up">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neon-pink" />
-                <Input
-                  placeholder="Search by name or location..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 glass border-electric-cyan/20 focus:border-electric-cyan text-white"
-                />
-              </div>
-              
-              <Select onValueChange={setSelectedBloodGroup}>
-                <SelectTrigger className="glass border-electric-cyan/20 text-white">
-                  <SelectValue placeholder="Blood Group" />
-                </SelectTrigger>
-                <SelectContent>
-                  {bloodGroups.map((group) => (
-                    <SelectItem key={group} value={group}>
-                      {group}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          {error && (
+            <div className="mb-8 p-4 bg-red-900/20 border border-red-500/20 rounded-lg">
+              <p className="text-red-400">{error}</p>
+            </div>
+          )}
 
-              <Select onValueChange={setSelectedLocation}>
-                <SelectTrigger className="glass border-electric-cyan/20 text-white">
-                  <SelectValue placeholder="Location" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="New York">New York</SelectItem>
-                  <SelectItem value="Los Angeles">Los Angeles</SelectItem>
-                  <SelectItem value="Chicago">Chicago</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Button className="bg-gradient-to-r from-neon-pink to-electric-cyan text-white">
-                <Filter className="w-4 h-4 mr-2" />
-                Apply Filters
+          {donors.length === 0 ? (
+            <div className="text-center py-16">
+              <Heart className="w-16 h-16 text-white/20 mx-auto mb-4" />
+              <h2 className="text-2xl font-bold text-white mb-2">No donors currently available</h2>
+              <p className="text-white/60 mb-8">Be the first to register as a donor and help save lives!</p>
+              <Button 
+                onClick={() => window.location.href = '/register'}
+                className="bg-gradient-to-r from-neon-pink to-electric-cyan text-white"
+              >
+                Become a Donor
               </Button>
             </div>
-          </div>
-
-          {/* Donor Cards */}
-          {filteredDonors.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredDonors.map((donor, index) => (
-                <div
-                  key={donor.id}
-                  className="glass-card p-6 rounded-2xl hover:scale-105 transition-all duration-300 animate-fade-in"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  {/* Donor Header */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 rounded-full overflow-hidden">
-                        {donor.profilePhoto ? (
-                          <img 
-                            src={donor.profilePhoto} 
-                            alt={donor.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-r from-neon-pink to-electric-cyan flex items-center justify-center text-white font-bold">
-                            {donor.name.split(' ').map(n => n[0]).join('')}
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {donors.map((donor) => (
+                <Card key={donor.id} className="backdrop-blur-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-12 bg-gradient-to-r from-neon-pink to-electric-cyan rounded-full flex items-center justify-center">
+                          <User className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-white text-lg">{donor.full_name}</CardTitle>
+                          <div className="flex items-center mt-1">
+                            <Badge className="bg-neon-pink/20 text-neon-pink border-neon-pink/30">
+                              {donor.blood_group}
+                            </Badge>
                           </div>
-                        )}
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-soft-white">
-                          {donor.name}
-                        </h3>
-                        <div className="flex items-center text-sm text-dark-text/60">
-                          <MapPin className="w-4 h-4 mr-1" />
-                          {donor.location}
                         </div>
                       </div>
+                      <Badge 
+                        variant={donor.availability ? "default" : "secondary"}
+                        className={donor.availability 
+                          ? "bg-green-900/30 text-green-400 border-green-400/20" 
+                          : "bg-gray-900/30 text-gray-400 border-gray-400/20"
+                        }
+                      >
+                        {donor.availability ? 'Available' : 'Unavailable'}
+                      </Badge>
                     </div>
-                    <div className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      donor.isAvailable
-                        ? 'bg-green-900/30 text-green-400'
-                        : 'bg-red-900/30 text-red-400'
-                    }`}>
-                      {donor.isAvailable ? 'Available' : 'Not Available'}
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="flex items-center text-white/70">
+                        <Calendar className="w-4 h-4 mr-2 text-neon-pink" />
+                        Age: {donor.age}
+                      </div>
+                      <div className="flex items-center text-white/70">
+                        <Phone className="w-4 h-4 mr-2 text-neon-pink" />
+                        {donor.phone_number}
+                      </div>
                     </div>
-                  </div>
+                    
+                    <div className="flex items-center text-white/70 text-sm">
+                      <MapPin className="w-4 h-4 mr-2 text-neon-pink" />
+                      {donor.city}, {donor.state}
+                    </div>
 
-                  {/* Blood Group */}
-                  <div className="mb-4">
-                    <div className="inline-flex items-center bg-neon-pink/10 px-4 py-2 rounded-full">
-                      <Heart className="w-4 h-4 mr-2 text-neon-pink" fill="currentColor" />
-                      <span className="text-neon-pink font-bold text-lg">
-                        {donor.bloodGroup}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Stats */}
-                  <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-                    <div className="text-center p-2 glass rounded-lg">
-                      <div className="text-neon-pink font-bold">
-                        {donor.totalDonations}
-                      </div>
-                      <div className="text-dark-text/60">
-                        Donations
-                      </div>
-                    </div>
-                    <div className="text-center p-2 glass rounded-lg">
-                      <div className="text-neon-pink font-bold">
-                        {donor.lastDonation}
-                      </div>
-                      <div className="text-dark-text/60">
-                        Last Donation
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Badges */}
-                  <div className="mb-4">
-                    <div className="flex flex-wrap gap-2">
-                      {donor.badges.map((badge) => (
-                        <Badge
-                          key={badge}
-                          variant="secondary"
-                          className="bg-electric-cyan/20 text-dark-text"
+                    <div className="flex gap-2 pt-4">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1 border-white/20 text-white hover:bg-white/10"
+                        onClick={() => window.location.href = `tel:${donor.phone_number}`}
+                      >
+                        <Phone className="w-4 h-4 mr-2" />
+                        Call
+                      </Button>
+                      {donor.pdf_url && (
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="flex-1 border-neon-pink/30 text-neon-pink hover:bg-neon-pink/10"
+                          onClick={() => handleDownloadPDF(donor.pdf_url!, donor.full_name)}
                         >
-                          <Award className="w-3 h-3 mr-1" />
-                          {badge}
-                        </Badge>
-                      ))}
+                          <Download className="w-4 h-4 mr-2" />
+                          PDF
+                        </Button>
+                      )}
                     </div>
-                  </div>
-
-                  {/* Contact Actions */}
-                  <div className="flex space-x-2">
-                    <Button
-                      size="sm"
-                      className="flex-1 bg-gradient-to-r from-neon-pink to-electric-cyan text-white"
-                      disabled={!donor.isAvailable}
-                    >
-                      <Phone className="w-4 h-4 mr-2" />
-                      Call
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="flex-1 border-electric-cyan/20 text-electric-cyan"
-                      disabled={!donor.isAvailable}
-                    >
-                      <Mail className="w-4 h-4 mr-2" />
-                      Email
-                    </Button>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               ))}
-            </div>
-          ) : (
-            /* Empty State - "Oops, no donors found" */
-            <div className="text-center py-20 animate-fade-in">
-              <div className="max-w-md mx-auto">
-                <div className="w-24 h-24 bg-neon-pink/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Heart className="w-12 h-12 text-neon-pink" />
-                </div>
-                <h3 className="text-3xl font-bold text-soft-white mb-4">
-                  Oops! No Donors Found
-                </h3>
-                <p className="text-dark-text/60 text-lg mb-8 leading-relaxed">
-                  We couldn't find any donors matching your criteria right now. 
-                  Try adjusting your search filters or check back later as new heroes join our community every day.
-                </p>
-                <div className="space-y-4">
-                  <Button 
-                    onClick={() => {
-                      setSearchTerm('');
-                      setSelectedBloodGroup('');
-                      setSelectedLocation('');
-                    }}
-                    className="bg-gradient-to-r from-neon-pink to-electric-cyan text-white px-8 py-3 rounded-full hover:scale-105 transition-all duration-300"
-                  >
-                    Clear All Filters
-                  </Button>
-                  <p className="text-sm text-dark-text/50">
-                    Or encourage someone you know to become a donor and save lives!
-                  </p>
-                </div>
-              </div>
             </div>
           )}
         </div>

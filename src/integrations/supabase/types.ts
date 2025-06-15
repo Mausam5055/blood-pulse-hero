@@ -9,6 +9,51 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      donors: {
+        Row: {
+          age: number
+          availability: boolean | null
+          blood_group: string
+          city: string
+          created_at: string | null
+          full_name: string
+          id: string
+          pdf_url: string | null
+          phone_number: string
+          state: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          age: number
+          availability?: boolean | null
+          blood_group: string
+          city: string
+          created_at?: string | null
+          full_name: string
+          id?: string
+          pdf_url?: string | null
+          phone_number: string
+          state: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          age?: number
+          availability?: boolean | null
+          blood_group?: string
+          city?: string
+          created_at?: string | null
+          full_name?: string
+          id?: string
+          pdf_url?: string | null
+          phone_number?: string
+          state?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -30,6 +75,45 @@ export type Database = {
           full_name?: string | null
           id?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      requests: {
+        Row: {
+          blood_group_needed: string
+          contact_details: string
+          created_at: string | null
+          id: string
+          location: string
+          message: string | null
+          name: string
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          blood_group_needed: string
+          contact_details: string
+          created_at?: string | null
+          id?: string
+          location: string
+          message?: string | null
+          name: string
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          blood_group_needed?: string
+          contact_details?: string
+          created_at?: string | null
+          id?: string
+          location?: string
+          message?: string | null
+          name?: string
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }

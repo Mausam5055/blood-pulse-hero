@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Heart, Calendar, Award, Edit, Download, Bell, MapPin, Save, User } from 'lucide-react';
+import { Heart, Calendar, Award, Edit, Download, Bell, MapPin, Save, User, Droplets, Trash2, Phone } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,11 +20,23 @@ interface UserProfile {
   created_at: string;
 }
 
+interface UserRequest {
+  id: string;
+  name: string;
+  blood_group_needed: string;
+  location: string;
+  contact_details: string;
+  message: string | null;
+  status: string;
+  created_at: string;
+}
+
 const UserDashboard = () => {
   const { user, session, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [userRequests, setUserRequests] = useState<UserRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -40,10 +51,11 @@ const UserDashboard = () => {
     }
   }, [user, authLoading, navigate]);
 
-  // Fetch user profile
+  // Fetch user profile and requests
   useEffect(() => {
     if (user) {
       fetchProfile();
+      fetchUserRequests();
     }
   }, [user]);
 
@@ -55,7 +67,7 @@ const UserDashboard = () => {
         .eq('id', user?.id)
         .single();
 
-      if (error && error.code !== 'PGRST116') { // PGRST116 is "not found"
+      if (error && error.code !== 'PGRST116') {
         throw error;
       }
 
@@ -66,7 +78,6 @@ const UserDashboard = () => {
           avatar_url: data.avatar_url || '',
         });
       } else {
-        // Create profile if it doesn't exist
         const { data: newProfile, error: createError } = await supabase
           .from('profiles')
           .insert([
@@ -96,6 +107,50 @@ const UserDashboard = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchUserRequests = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('requests')
+        .select('*')
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setUserRequests(data || []);
+    } catch (error: any) {
+      console.error('Error fetching user requests:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load your requests",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteRequest = async (requestId: string) => {
+    try {
+      const { error } = await supabase
+        .from('requests')
+        .delete()
+        .eq('id', requestId);
+
+      if (error) throw error;
+
+      setUserRequests(prev => prev.filter(req => req.id !== requestId));
+      toast({
+        title: "Success",
+        description: "Request deleted successfully",
+      });
+    } catch (error: any) {
+      console.error('Error deleting request:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete request",
+        variant: "destructive",
+      });
     }
   };
 
@@ -140,6 +195,18 @@ const UserDashboard = () => {
     }
   };
 
+  const getTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+    
+    if (diffInHours < 1) return 'Less than an hour ago';
+    if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+  };
+
   if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -152,7 +219,7 @@ const UserDashboard = () => {
   }
 
   if (!user) {
-    return null; // Will redirect via useEffect
+    return null;
   }
 
   const displayName = profile?.full_name || user.user_metadata?.full_name || user.email || 'User';
@@ -280,6 +347,79 @@ const UserDashboard = () => {
                 )}
               </div>
 
+              {/* User's Blood Requests */}
+              <div className="backdrop-blur-lg bg-white/5 border border-white/10 shadow-xl p-6 rounded-2xl animate-slide-up">
+                <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+                  <Droplets className="w-5 h-5 mr-2 text-neon-pink" />
+                  Your Blood Requests
+                </h3>
+                
+                {userRequests.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Droplets className="w-12 h-12 text-white/20 mx-auto mb-4" />
+                    <p className="text-white/60 mb-4">You haven't submitted any blood requests yet.</p>
+                    <Button 
+                      onClick={() => navigate('/request-form')}
+                      className="bg-gradient-to-r from-neon-pink to-electric-cyan text-white"
+                    >
+                      Submit a Request
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {userRequests.map((request) => (
+                      <div key={request.id} className="p-4 backdrop-blur-md bg-white/5 border border-white/10 rounded-lg">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center mb-2">
+                              <h4 className="font-medium text-white">{request.name}</h4>
+                              <Badge className="ml-2 bg-red-900/30 text-red-400 border-red-400/20">
+                                Needs {request.blood_group_needed}
+                              </Badge>
+                              <Badge 
+                                variant="secondary" 
+                                className={`ml-2 ${
+                                  request.status === 'active' 
+                                    ? 'bg-green-900/30 text-green-400 border-green-400/20' 
+                                    : 'bg-gray-900/30 text-gray-400 border-gray-400/20'
+                                }`}
+                              >
+                                {request.status}
+                              </Badge>
+                            </div>
+                            <div className="text-sm text-white/60 space-y-1">
+                              <div className="flex items-center">
+                                <MapPin className="w-3 h-3 mr-1" />
+                                {request.location}
+                              </div>
+                              <div className="flex items-center">
+                                <Phone className="w-3 h-3 mr-1" />
+                                {request.contact_details}
+                              </div>
+                              <div className="flex items-center">
+                                <Calendar className="w-3 h-3 mr-1" />
+                                {getTimeAgo(request.created_at)}
+                              </div>
+                            </div>
+                            {request.message && (
+                              <p className="text-sm text-white/70 mt-2 italic">"{request.message}"</p>
+                            )}
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteRequest(request.id)}
+                            className="border-red-500/30 text-red-400 hover:bg-red-500/10 ml-4"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               {/* Account Information */}
               <div className="backdrop-blur-lg bg-white/5 border border-white/10 shadow-xl p-6 rounded-2xl animate-slide-up">
                 <h3 className="text-xl font-semibold text-white mb-4">
@@ -322,27 +462,35 @@ const UserDashboard = () => {
                 </h3>
                 <div className="space-y-3">
                   <Button 
-                    onClick={() => navigate('/register')}
+                    onClick={() => navigate('/donate-form')}
                     className="w-full bg-gradient-to-r from-neon-pink to-electric-cyan text-white hover:opacity-90"
                   >
                     <Heart className="w-4 h-4 mr-2" />
-                    Donate Blood
+                    Become a Donor
                   </Button>
                   <Button 
-                    onClick={() => navigate('/request')}
+                    onClick={() => navigate('/request-form')}
                     variant="outline" 
                     className="w-full border-neon-pink/30 text-white hover:bg-neon-pink/10"
                   >
-                    <Bell className="w-4 h-4 mr-2" />
+                    <Droplets className="w-4 h-4 mr-2" />
                     Request Blood
                   </Button>
                   <Button 
-                    onClick={() => navigate('/events')}
+                    onClick={() => navigate('/requests')}
                     variant="outline" 
                     className="w-full border-electric-cyan/30 text-white hover:bg-electric-cyan/10"
                   >
-                    <Calendar className="w-4 h-4 mr-2" />
-                    View Events
+                    <Bell className="w-4 h-4 mr-2" />
+                    View All Requests
+                  </Button>
+                  <Button 
+                    onClick={() => navigate('/donors')}
+                    variant="outline" 
+                    className="w-full border-electric-cyan/30 text-white hover:bg-electric-cyan/10"
+                  >
+                    <User className="w-4 h-4 mr-2" />
+                    View All Donors
                   </Button>
                 </div>
               </div>

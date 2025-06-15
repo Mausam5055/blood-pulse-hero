@@ -20,6 +20,9 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import DonateForm from "./pages/DonateForm";
+import RequestForm from "./pages/RequestForm";
+import RequestsDirectory from "./pages/RequestsDirectory";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +48,9 @@ const App = () => (
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/donate-form" element={<DonateForm />} />
+            <Route path="/request-form" element={<RequestForm />} />
+            <Route path="/requests" element={<RequestsDirectory />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
