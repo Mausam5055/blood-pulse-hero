@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -68,8 +67,9 @@ const RequestForm = () => {
         throw new Error('Please fill in all required fields');
       }
 
+      // CRITICAL: Ensure user_id is properly set for RLS
       const requestData = {
-        user_id: user.id,
+        user_id: user.id, // This is the key field for RLS
         name: formData.name.trim(),
         blood_group_needed: formData.blood_group_needed,
         location: formData.location.trim(),
@@ -79,18 +79,7 @@ const RequestForm = () => {
       };
 
       console.log('Inserting request data:', requestData);
-
-      // Test database connection first
-      const { data: testData, error: testError } = await supabase
-        .from('requests')
-        .select('count', { count: 'exact', head: true });
-
-      if (testError) {
-        console.error('Database connection test failed:', testError);
-        throw new Error(`Database connection failed: ${testError.message}`);
-      }
-
-      console.log('Database connection successful. Current request count:', testData);
+      console.log('Current user auth status:', await supabase.auth.getUser());
 
       const { data, error } = await supabase
         .from('requests')

@@ -178,9 +178,9 @@ const DonateForm = () => {
         console.warn('PDF generation failed, continuing without PDF:', pdfError);
       }
 
-      // Prepare donor data
+      // Prepare donor data - CRITICAL: Ensure user_id is properly set
       const donorData = {
-        user_id: user.id,
+        user_id: user.id, // This is the key field for RLS
         full_name: formData.full_name.trim(),
         blood_group: formData.blood_group,
         age: ageNum,
@@ -192,18 +192,7 @@ const DonateForm = () => {
       };
 
       console.log('Inserting donor data:', donorData);
-
-      // Test database connection first
-      const { data: testData, error: testError } = await supabase
-        .from('donors')
-        .select('count', { count: 'exact', head: true });
-
-      if (testError) {
-        console.error('Database connection test failed:', testError);
-        throw new Error(`Database connection failed: ${testError.message}`);
-      }
-
-      console.log('Database connection successful. Current donor count:', testData);
+      console.log('Current user auth status:', await supabase.auth.getUser());
 
       // Insert donor data into database
       const { data, error } = await supabase
