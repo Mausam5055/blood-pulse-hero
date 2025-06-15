@@ -66,7 +66,7 @@ const Dashboard = () => {
                       </div>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" className="border-deep-coral/20 dark:border-electric-cyan/20">
+                  <Button variant="outline" size="sm" className="border-deep-coral/20 dark:border-electric-cyan/20 hover:bg-transparent hover:border-deep-coral/20 dark:hover:border-electric-cyan/20">
                     <Edit className="w-4 h-4 mr-2" />
                     Edit Profile
                   </Button>
@@ -127,7 +127,7 @@ const Dashboard = () => {
                         <p className="text-green-600 dark:text-green-400 font-semibold mb-2">
                           You're eligible to donate!
                         </p>
-                        <Button className="bg-gradient-to-r from-deep-coral to-soft-teal dark:from-neon-pink dark:to-electric-cyan text-white">
+                        <Button className="bg-gradient-to-r from-deep-coral to-soft-teal dark:from-neon-pink dark:to-electric-cyan text-white hover:opacity-90">
                           <Calendar className="w-4 h-4 mr-2" />
                           Schedule Donation
                         </Button>
@@ -232,7 +232,7 @@ const Dashboard = () => {
                   <Button 
                     onClick={() => navigate('/donate-form')}
                     variant="outline" 
-                    className="w-full border-deep-coral/20 dark:border-electric-cyan/20"
+                    className="w-full border-deep-coral/20 dark:border-electric-cyan/20 hover:bg-transparent hover:border-deep-coral/20 dark:hover:border-electric-cyan/20"
                   >
                     <Bell className="w-4 h-4 mr-2" />
                     Set Donation Reminder
@@ -240,7 +240,7 @@ const Dashboard = () => {
                   <Button 
                     onClick={() => navigate('/donate-form')}
                     variant="outline" 
-                    className="w-full border-deep-coral/20 dark:border-electric-cyan/20"
+                    className="w-full border-deep-coral/20 dark:border-electric-cyan/20 hover:bg-transparent hover:border-deep-coral/20 dark:hover:border-electric-cyan/20"
                   >
                     <Heart className="w-4 h-4 mr-2" />
                     Become a Donor
