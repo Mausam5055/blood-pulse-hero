@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -231,7 +232,8 @@ const Dashboard = () => {
                 <div className="space-y-3">
                   <Button 
                     onClick={() => navigate('/donate-form')}
-                    className="w-full bg-gradient-to-r from-deep-coral to-soft-teal dark:from-neon-pink dark:to-electric-cyan text-white"
+                    variant="outline" 
+                    className="w-full border-deep-coral/20 dark:border-electric-cyan/20"
                   >
                     <Bell className="w-4 h-4 mr-2" />
                     Set Donation Reminder
