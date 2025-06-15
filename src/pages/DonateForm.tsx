@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -153,7 +154,8 @@ const DonateForm = () => {
     }
 
     console.log('=== DONOR FORM SUBMISSION START ===');
-    console.log('User:', user);
+    console.log('User object:', JSON.stringify(user, null, 2));
+    console.log('User ID:', user.id);
     console.log('Form data:', formData);
 
     setLoading(true);
@@ -169,6 +171,32 @@ const DonateForm = () => {
         throw new Error('Age must be between 18 and 65');
       }
 
+      // Check current session status
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      console.log('Current session:', sessionData);
+      if (sessionError) {
+        console.error('Session error:', sessionError);
+        throw new Error('Authentication session error');
+      }
+
+      if (!sessionData.session) {
+        console.error('No active session found');
+        throw new Error('No active session found. Please log in again.');
+      }
+
+      // Test if we can access the donors table at all
+      console.log('Testing database access...');
+      const { data: testData, error: testError } = await supabase
+        .from('donors')
+        .select('count', { count: 'exact', head: true });
+
+      console.log('Database test result:', { testData, testError });
+      
+      if (testError) {
+        console.error('Database access test failed:', testError);
+        throw new Error(`Database access failed: ${testError.message}`);
+      }
+
       // Generate and upload PDF (non-blocking)
       let pdfUrl = '';
       try {
@@ -178,9 +206,9 @@ const DonateForm = () => {
         console.warn('PDF generation failed, continuing without PDF:', pdfError);
       }
 
-      // Prepare donor data - CRITICAL: Ensure user_id is properly set
+      // Prepare donor data with explicit user_id
       const donorData = {
-        user_id: user.id, // This is the key field for RLS
+        user_id: user.id,
         full_name: formData.full_name.trim(),
         blood_group: formData.blood_group,
         age: ageNum,
@@ -191,14 +219,15 @@ const DonateForm = () => {
         pdf_url: pdfUrl || null,
       };
 
-      console.log('Inserting donor data:', donorData);
-      console.log('Current user auth status:', await supabase.auth.getUser());
+      console.log('Final donor data to insert:', JSON.stringify(donorData, null, 2));
 
       // Insert donor data into database
       const { data, error } = await supabase
         .from('donors')
         .insert(donorData)
         .select();
+
+      console.log('Supabase insert response:', { data, error });
 
       if (error) {
         console.error('Supabase insertion error:', error);
@@ -208,7 +237,18 @@ const DonateForm = () => {
           hint: error.hint,
           code: error.code
         });
+        
+        // Check if it's an RLS policy violation
+        if (error.message.includes('row-level security') || error.message.includes('RLS') || error.code === '42501') {
+          throw new Error('Permission denied: Unable to save donor data. Please contact support.');
+        }
+        
         throw error;
+      }
+
+      if (!data || data.length === 0) {
+        console.error('No data returned from insertion');
+        throw new Error('No data was returned from the database insertion');
       }
 
       console.log('Donor registration successful:', data);
@@ -220,6 +260,8 @@ const DonateForm = () => {
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(1);
+
+      console.log('Verification query result:', { verifyData, verifyError });
 
       if (verifyError) {
         console.error('Verification query failed:', verifyError);

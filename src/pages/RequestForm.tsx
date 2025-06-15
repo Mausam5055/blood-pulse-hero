@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -57,7 +58,8 @@ const RequestForm = () => {
     }
 
     console.log('=== BLOOD REQUEST SUBMISSION START ===');
-    console.log('User:', user);
+    console.log('User object:', JSON.stringify(user, null, 2));
+    console.log('User ID:', user.id);
     console.log('Form data:', formData);
 
     setLoading(true);
@@ -67,9 +69,35 @@ const RequestForm = () => {
         throw new Error('Please fill in all required fields');
       }
 
-      // CRITICAL: Ensure user_id is properly set for RLS
+      // Check current session status
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      console.log('Current session:', sessionData);
+      if (sessionError) {
+        console.error('Session error:', sessionError);
+        throw new Error('Authentication session error');
+      }
+
+      if (!sessionData.session) {
+        console.error('No active session found');
+        throw new Error('No active session found. Please log in again.');
+      }
+
+      // Test if we can access the requests table at all
+      console.log('Testing database access...');
+      const { data: testData, error: testError } = await supabase
+        .from('requests')
+        .select('count', { count: 'exact', head: true });
+
+      console.log('Database test result:', { testData, testError });
+      
+      if (testError) {
+        console.error('Database access test failed:', testError);
+        throw new Error(`Database access failed: ${testError.message}`);
+      }
+
+      // Prepare request data with explicit user_id
       const requestData = {
-        user_id: user.id, // This is the key field for RLS
+        user_id: user.id,
         name: formData.name.trim(),
         blood_group_needed: formData.blood_group_needed,
         location: formData.location.trim(),
@@ -78,13 +106,14 @@ const RequestForm = () => {
         status: 'active',
       };
 
-      console.log('Inserting request data:', requestData);
-      console.log('Current user auth status:', await supabase.auth.getUser());
+      console.log('Final request data to insert:', JSON.stringify(requestData, null, 2));
 
       const { data, error } = await supabase
         .from('requests')
         .insert(requestData)
         .select();
+
+      console.log('Supabase insert response:', { data, error });
 
       if (error) {
         console.error('Supabase insertion error:', error);
@@ -94,7 +123,18 @@ const RequestForm = () => {
           hint: error.hint,
           code: error.code
         });
+        
+        // Check if it's an RLS policy violation
+        if (error.message.includes('row-level security') || error.message.includes('RLS') || error.code === '42501') {
+          throw new Error('Permission denied: Unable to save request data. Please contact support.');
+        }
+        
         throw error;
+      }
+
+      if (!data || data.length === 0) {
+        console.error('No data returned from insertion');
+        throw new Error('No data was returned from the database insertion');
       }
 
       console.log('Request submitted successfully:', data);
@@ -106,6 +146,8 @@ const RequestForm = () => {
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(1);
+
+      console.log('Verification query result:', { verifyData, verifyError });
 
       if (verifyError) {
         console.error('Verification query failed:', verifyError);
