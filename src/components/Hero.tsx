@@ -47,7 +47,7 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12">
             <Button 
               size="lg" 
-              onClick={() => navigate('/register')}
+              onClick={() => navigate('/donate-form')}
               className="bg-neon-pink hover:bg-neon-pink/90 text-white px-8 py-4 text-lg font-semibold rounded-full transition-all duration-300 shadow-lg"
             >
               <Heart className="w-5 h-5 mr-2" fill="currentColor" />
@@ -57,7 +57,7 @@ const Hero = () => {
             <Button 
               size="lg" 
               variant="outline" 
-              onClick={() => navigate('/request')}
+              onClick={() => navigate('/request-form')}
               className="border-2 border-white text-white hover:bg-white hover:text-space-navy px-8 py-4 text-lg font-semibold rounded-full transition-all duration-300 backdrop-blur-sm"
             >
               <Droplets className="w-5 h-5 mr-2" />
