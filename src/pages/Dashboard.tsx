@@ -1,13 +1,14 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Heart, Calendar, Award, Edit, Download, Bell, MapPin } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
-  // Mock user data
+  const navigate = useNavigate();
+
   const user = {
     name: 'John Smith',
     bloodGroup: 'O+',
@@ -38,7 +39,6 @@ const Dashboard = () => {
       
       <div className="pt-20 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          {/* Header */}
           <div className="mb-8 animate-fade-in">
             <h1 className="text-4xl font-bold text-rich-charcoal dark:text-soft-white mb-2">
               Welcome back, {user.name}!
@@ -49,9 +49,7 @@ const Dashboard = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Main Content */}
             <div className="lg:col-span-2 space-y-8">
-              {/* Profile Overview */}
               <div className="glass-card p-6 rounded-2xl animate-slide-up">
                 <div className="flex items-start justify-between mb-6">
                   <div className="flex items-center space-x-4">
@@ -105,7 +103,6 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Next Donation Progress */}
               <div className="glass-card p-6 rounded-2xl animate-slide-up">
                 <h3 className="text-xl font-semibold text-rich-charcoal dark:text-soft-white mb-4">
                   Next Donation Eligibility
@@ -140,7 +137,6 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Donation History */}
               <div className="glass-card p-6 rounded-2xl animate-slide-up">
                 <h3 className="text-xl font-semibold text-rich-charcoal dark:text-soft-white mb-4">
                   Donation History
@@ -175,7 +171,6 @@ const Dashboard = () => {
 
             {/* Sidebar */}
             <div className="space-y-8">
-              {/* Achievements */}
               <div className="glass-card p-6 rounded-2xl animate-fade-in">
                 <h3 className="text-xl font-semibold text-rich-charcoal dark:text-soft-white mb-4 flex items-center">
                   <Award className="w-5 h-5 mr-2 text-deep-coral dark:text-neon-pink" />
@@ -202,7 +197,6 @@ const Dashboard = () => {
                 </Button>
               </div>
 
-              {/* Upcoming Events */}
               <div className="glass-card p-6 rounded-2xl animate-fade-in">
                 <h3 className="text-xl font-semibold text-rich-charcoal dark:text-soft-white mb-4 flex items-center">
                   <Calendar className="w-5 h-5 mr-2 text-deep-coral dark:text-neon-pink" />
@@ -235,13 +229,20 @@ const Dashboard = () => {
                   Quick Actions
                 </h3>
                 <div className="space-y-3">
-                  <Button className="w-full bg-gradient-to-r from-deep-coral to-soft-teal dark:from-neon-pink dark:to-electric-cyan text-white">
+                  <Button 
+                    onClick={() => navigate('/donate-form')}
+                    className="w-full bg-gradient-to-r from-deep-coral to-soft-teal dark:from-neon-pink dark:to-electric-cyan text-white"
+                  >
                     <Bell className="w-4 h-4 mr-2" />
                     Set Donation Reminder
                   </Button>
-                  <Button variant="outline" className="w-full border-deep-coral/20 dark:border-electric-cyan/20">
+                  <Button 
+                    onClick={() => navigate('/donate-form')}
+                    variant="outline" 
+                    className="w-full border-deep-coral/20 dark:border-electric-cyan/20"
+                  >
                     <Heart className="w-4 h-4 mr-2" />
-                    Refer a Friend
+                    Become a Donor
                   </Button>
                 </div>
               </div>
